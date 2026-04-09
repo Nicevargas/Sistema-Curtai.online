@@ -64,7 +64,6 @@ export default function CadastroPage() {
               status: 'Ativo',
               points: 0,
               streak: 0,
-              plan: '7_days_free',
               journey_id: 'fa512a52-9742-410f-a71b-0bd4013bec8d'
             }
           ]);

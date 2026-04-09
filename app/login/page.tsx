@@ -163,7 +163,7 @@ export default function LoginPage() {
 
           <div className="text-center mt-8">
             <p className="text-slate-600 text-[10px] mt-4 px-6 italic">
-              * O acesso é restrito a membros. Se você adquiriu seu acesso, utilize o link enviado para o seu e-mail após a confirmação do pagamento.
+              * O acesso é restrito a membros.
             </p>
           </div>
         </form>

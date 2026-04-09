@@ -3,7 +3,7 @@
 import Header from '@/components/Header';
 import BottomNav from '@/components/BottomNav';
 import { motion } from 'motion/react';
-import { User, Award, Settings, LogOut, Star, TrendingUp, Shield, ArrowRight, CheckCircle2, AlertCircle, X, CreditCard } from 'lucide-react';
+import { User, Award, Settings, LogOut, TrendingUp, Shield, ArrowRight, CheckCircle2, AlertCircle, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import Image from 'next/image';
@@ -20,9 +20,6 @@ interface UserProfile {
   streak: number;
   bio?: string;
   created_at?: string;
-  plan?: string;
-  plan_expires_at?: string;
-  is_paid?: boolean;
   journey_id?: string;
 }
 
@@ -36,26 +33,15 @@ export default function PerfilPage() {
   const [editName, setEditName] = useState('');
   const [editBio, setEditBio] = useState('');
   const [editAvatar, setEditAvatar] = useState('');
-  const [editPlan, setEditPlan] = useState('');
   const [editJourneyId, setEditJourneyId] = useState('');
   const [journeyTitle, setJourneyTitle] = useState<string | null>(null);
   const [availableJourneys, setAvailableJourneys] = useState<{ id: string, title: string }[]>([]);
   const [saving, setSaving] = useState(false);
-  const [checkoutLoading, setCheckoutLoading] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
 
   useEffect(() => {
     let isMounted = true;
     
-    // Check for status in URL
-    const params = new URLSearchParams(window.location.search);
-    const status = params.get('status');
-    if (status === 'success') {
-      setMessage({ type: 'success', text: 'Pagamento confirmado! Sua assinatura está ativa.' });
-      // Remove query param without reload
-      window.history.replaceState({}, '', window.location.pathname);
-    }
-
     async function fetchData() {
       try {
         const { data: { user } } = await supabase.auth.getUser();
@@ -73,7 +59,6 @@ export default function PerfilPage() {
             setEditName(profileData.name || '');
             setEditBio(profileData.bio || '');
             setEditAvatar(profileData.avatar_url || '');
-            setEditPlan(profileData.plan || '7_days_free');
             setEditJourneyId(profileData.journey_id || 'fa512a52-9742-410f-a71b-0bd4013bec8d');
 
             // Fetch journey title
@@ -167,7 +152,6 @@ export default function PerfilPage() {
           name: editName,
           bio: editBio,
           avatar_url: editAvatar,
-          plan: editPlan,
           journey_id: editJourneyId
         })
         .eq('id', profile.id);
@@ -179,7 +163,6 @@ export default function PerfilPage() {
         name: editName,
         bio: editBio,
         avatar_url: editAvatar,
-        plan: editPlan,
         journey_id: editJourneyId
       });
 
@@ -296,17 +279,6 @@ export default function PerfilPage() {
                     </div>
                   )}
                   
-                  {profile?.plan && (
-                    <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-accent-gold/20 border border-accent-gold/30">
-                      <Star className="size-3 text-accent-gold" />
-                      <p className="text-[10px] text-accent-gold font-bold uppercase tracking-widest">
-                        {profile.plan === '7_days_free' ? '7 dias grátis' : 
-                         profile.plan === '30_days_free' ? '30 dias grátis' : 
-                         profile.plan === 'no_charge' ? 'Sem cobrança' : profile.plan}
-                      </p>
-                    </div>
-                  )}
-
                   {journeyTitle && (
                     <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/20 border border-emerald-500/30">
                       <TrendingUp className="size-3 text-emerald-400" />
@@ -314,51 +286,6 @@ export default function PerfilPage() {
                         Curso: {journeyTitle}
                       </p>
                     </div>
-                  )}
-                  
-                  {!(profile?.is_paid || profile?.status === 'Pago' || profile?.role === 'admin' || profile?.role === 'admin master' || profile?.role === 'admim master' || profile?.plan === 'no_charge') && (
-                    <button 
-                      onClick={async () => {
-                        try {
-                          setCheckoutLoading(true);
-                          const response = await fetch('/api/checkout', { method: 'POST' });
-                          
-                          let data;
-                          try {
-                            data = await response.json();
-                          } catch (e) {
-                            console.error('Failed to parse checkout response:', e);
-                            data = { error: 'Erro ao processar resposta do servidor.' };
-                          }
-
-                          if (response.ok && data.init_point) {
-                            window.location.href = data.init_point;
-                          } else {
-                            setMessage({ 
-                              type: 'error', 
-                              text: data.error || 'Erro ao iniciar checkout.' 
-                            });
-                            if (data.details) console.error('Checkout details:', data.details);
-                          }
-                        } catch (e) {
-                          console.error(e);
-                          setMessage({ type: 'error', text: 'Erro de conexão com o servidor.' });
-                        } finally {
-                          setCheckoutLoading(false);
-                        }
-                      }}
-                      disabled={checkoutLoading}
-                      className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/20 border border-emerald-500/30 hover:bg-emerald-500/30 transition-colors disabled:opacity-50"
-                    >
-                      {checkoutLoading ? (
-                        <div className="size-3 border-2 border-emerald-400 border-t-transparent rounded-full animate-spin" />
-                      ) : (
-                        <CreditCard className="size-3 text-emerald-400" />
-                      )}
-                      <p className="text-[10px] text-emerald-400 font-bold uppercase tracking-widest">
-                        {checkoutLoading ? 'Iniciando...' : 'Assinar Agora'}
-                      </p>
-                    </button>
                   )}
                 </div>
 
@@ -398,18 +325,6 @@ export default function PerfilPage() {
                     className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-slate-800 focus:outline-none focus:border-primary/50"
                     placeholder="Link da imagem"
                   />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">Plano de Assinatura</label>
-                  <select 
-                    value={editPlan}
-                    onChange={(e) => setEditPlan(e.target.value)}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-slate-800 focus:outline-none focus:border-primary/50"
-                  >
-                    <option value="7_days_free" className="bg-white">7 dias grátis</option>
-                    <option value="30_days_free" className="bg-white">30 dias grátis</option>
-                    <option value="no_charge" className="bg-white">Sem cobrança</option>
-                  </select>
                 </div>
                 <div className="space-y-2">
                   <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">Seu Curso</label>
@@ -472,57 +387,6 @@ export default function PerfilPage() {
                   <h3 className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">Acesso Rápido</h3>
                   
                   <div className="grid grid-cols-1 gap-3">
-                    {!(profile?.is_paid || profile?.status === 'Pago' || profile?.role === 'admin' || profile?.role === 'admin master' || profile?.role === 'admim master' || profile?.plan === 'no_charge') && (
-                      <button 
-                        onClick={async () => {
-                          try {
-                            setCheckoutLoading(true);
-                            const response = await fetch('/api/checkout', { method: 'POST' });
-                            
-                            let data;
-                            try {
-                              data = await response.json();
-                            } catch (e) {
-                              console.error('Failed to parse checkout response:', e);
-                              data = { error: 'Erro ao processar resposta do servidor.' };
-                            }
-
-                            if (response.ok && data.init_point) {
-                              window.location.href = data.init_point;
-                            } else {
-                              setMessage({ 
-                                type: 'error', 
-                                text: data.error || 'Erro ao iniciar checkout.' 
-                              });
-                              if (data.details) console.error('Checkout details:', data.details);
-                            }
-                          } catch (e) {
-                            console.error(e);
-                            setMessage({ type: 'error', text: 'Erro de conexão com o servidor.' });
-                          } finally {
-                            setCheckoutLoading(false);
-                          }
-                        }}
-                        disabled={checkoutLoading}
-                        className="flex items-center justify-between p-5 rounded-3xl bg-emerald-500/10 border border-emerald-500/20 hover:bg-emerald-500/20 transition-all hover:pl-6 group disabled:opacity-50"
-                      >
-                        <div className="flex items-center gap-4">
-                          <div className="size-12 rounded-2xl bg-emerald-500/20 flex items-center justify-center group-hover:scale-110 transition-transform">
-                            {checkoutLoading ? (
-                              <div className="size-6 border-2 border-emerald-400 border-t-transparent rounded-full animate-spin" />
-                            ) : (
-                              <CreditCard className="size-6 text-emerald-400" />
-                            )}
-                          </div>
-                          <div className="text-left">
-                            <p className="text-base font-bold text-emerald-400">Assinar Agora</p>
-                            <p className="text-[10px] text-emerald-500/70 uppercase tracking-widest">Libere acesso total ao sistema</p>
-                          </div>
-                        </div>
-                        <ArrowRight className="size-5 text-emerald-500/30 group-hover:translate-x-1 transition-transform" />
-                      </button>
-                    )}
-
                     <button 
                       onClick={() => setShowAchievements(true)}
                       className="flex items-center justify-between p-5 rounded-3xl bg-slate-50 border border-slate-200 hover:bg-slate-100 transition-all hover:pl-6 group"
