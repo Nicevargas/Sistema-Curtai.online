@@ -31,7 +31,7 @@ export default function BottomNav() {
 
   const navItems = [
     { icon: Home, label: 'Início', href: '/' },
-    { icon: Sparkles, label: 'Curso', href: '/jornada' },
+    { icon: Sparkles, label: 'Curso', href: '/curso' },
     { icon: Share2, label: 'Mapa', href: '/mapa' },
     { icon: Users, label: 'Comunidade', href: '/comunidade' },
     ...(isAdmin ? [{ icon: ShieldCheck, label: 'Admin', href: '/perfil' }] : []),

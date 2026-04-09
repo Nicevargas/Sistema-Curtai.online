@@ -189,7 +189,7 @@ export default function MapaPage() {
             </div>
             <div>
               <h1 className="text-xl font-bold text-slate-900 font-display">Mapa de Vértices</h1>
-              <p className="text-[10px] text-slate-500 uppercase tracking-widest">Sua jornada visual</p>
+              <p className="text-[10px] text-slate-500 uppercase tracking-widest">Seu mapa visual</p>
             </div>
           </div>
         </div>
@@ -238,7 +238,7 @@ export default function MapaPage() {
             <div className="flex gap-3">
               {selectedNode.type === 'lesson' ? (
                 <Link 
-                  href="/jornada"
+                  href="/curso"
                   className="flex-1 bg-primary text-white py-3 rounded-xl text-xs font-bold uppercase tracking-widest text-center hover:bg-primary/80 transition-all"
                 >
                   Ver Detalhes

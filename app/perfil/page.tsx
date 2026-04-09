@@ -20,7 +20,6 @@ interface UserProfile {
   streak: number;
   bio?: string;
   created_at?: string;
-  journey_id?: string;
 }
 
 export default function PerfilPage() {
@@ -33,9 +32,6 @@ export default function PerfilPage() {
   const [editName, setEditName] = useState('');
   const [editBio, setEditBio] = useState('');
   const [editAvatar, setEditAvatar] = useState('');
-  const [editJourneyId, setEditJourneyId] = useState('');
-  const [journeyTitle, setJourneyTitle] = useState<string | null>(null);
-  const [availableJourneys, setAvailableJourneys] = useState<{ id: string, title: string }[]>([]);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
 
@@ -59,28 +55,6 @@ export default function PerfilPage() {
             setEditName(profileData.name || '');
             setEditBio(profileData.bio || '');
             setEditAvatar(profileData.avatar_url || '');
-            setEditJourneyId(profileData.journey_id || 'fa512a52-9742-410f-a71b-0bd4013bec8d');
-
-            // Fetch journey title
-            const journeyId = profileData.journey_id || 'fa512a52-9742-410f-a71b-0bd4013bec8d';
-            const { data: journeyData } = await supabase
-              .from('journeys')
-              .select('title')
-              .eq('id', journeyId)
-              .single();
-            
-            if (journeyData) {
-              setJourneyTitle(journeyData.title);
-            }
-
-            // Fetch all available journeys for selection
-            const { data: allJourneys } = await supabase
-              .from('journeys')
-              .select('id, title');
-            
-            if (allJourneys) {
-              setAvailableJourneys(allJourneys);
-            }
 
             // Fetch achievements count and titles
             const { data: progressData, error: progressError } = await supabase
@@ -152,8 +126,7 @@ export default function PerfilPage() {
           name: editName,
           bio: editBio,
           avatar_url: editAvatar,
-          journey_id: editJourneyId
-        })
+                  })
         .eq('id', profile.id);
 
       if (error) throw error;
@@ -163,14 +136,7 @@ export default function PerfilPage() {
         name: editName,
         bio: editBio,
         avatar_url: editAvatar,
-        journey_id: editJourneyId
       });
-
-      // Update journey title locally
-      const selectedJourney = availableJourneys.find(j => j.id === editJourneyId);
-      if (selectedJourney) {
-        setJourneyTitle(selectedJourney.title);
-      }
       
       setIsEditing(false);
       setMessage({ type: 'success', text: 'Perfil atualizado com sucesso!' });
@@ -279,14 +245,6 @@ export default function PerfilPage() {
                     </div>
                   )}
                   
-                  {journeyTitle && (
-                    <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/20 border border-emerald-500/30">
-                      <TrendingUp className="size-3 text-emerald-400" />
-                      <p className="text-[10px] text-emerald-400 font-bold uppercase tracking-widest">
-                        Curso: {journeyTitle}
-                      </p>
-                    </div>
-                  )}
                 </div>
 
                 {profile?.created_at && (
@@ -308,12 +266,12 @@ export default function PerfilPage() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">Mantra / Bio</label>
+                  <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">Bio</label>
                   <textarea 
                     value={editBio}
                     onChange={(e) => setEditBio(e.target.value)}
                     className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-slate-800 focus:outline-none focus:border-primary/50 min-h-[80px]"
-                    placeholder="Seu mantra pessoal..."
+                    placeholder="Fale sobre você..."
                   />
                 </div>
                 <div className="space-y-2">
@@ -326,18 +284,7 @@ export default function PerfilPage() {
                     placeholder="Link da imagem"
                   />
                 </div>
-                <div className="space-y-2">
-                  <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">Seu Curso</label>
-                  <select 
-                    value={editJourneyId}
-                    onChange={(e) => setEditJourneyId(e.target.value)}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-slate-800 focus:outline-none focus:border-primary/50"
-                  >
-                    {availableJourneys.map(j => (
-                      <option key={j.id} value={j.id} className="bg-white">{j.title}</option>
-                    ))}
-                  </select>
-                </div>
+                
                 <div className="flex gap-2 pt-2">
                   <button 
                     type="button"

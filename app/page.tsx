@@ -12,16 +12,6 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { getDirectDriveLink, getEmbedVideoUrl } from '@/lib/utils';
 
-interface JourneyItem {
-  id: string;
-  title: string;
-  archetype: string;
-  image_url: string | null;
-  duration: string;
-  steps: number;
-  user_id?: string;
-}
-
 interface LessonData {
   id: string;
   titulo: string;
@@ -35,7 +25,6 @@ interface LessonData {
 }
 
 export default function Page() {
-  const [featuredJourneys, setFeaturedJourneys] = useState<JourneyItem[]>([]);
   const [featuredLesson, setFeaturedLesson] = useState<LessonData | null>(null);
   const [loading, setLoading] = useState(true);
   const [lessonLoading, setLessonLoading] = useState(true);
@@ -57,11 +46,9 @@ export default function Page() {
         // Fetch user profile
         const { data: profile } = await supabase
           .from('profiles')
-          .select('role, level, journey_id')
+          .select('role, level')
           .eq('id', user.id)
           .maybeSingle();
-
-        const journeyId = profile?.journey_id || 'fa512a52-9742-410f-a71b-0bd4013bec8d';
 
         // Fetch user progress
         const { data: progressData } = await supabase
@@ -116,17 +103,16 @@ export default function Page() {
         if (completedIds.size === 0 && welcomeData) {
           setFeaturedLesson(welcomeData);
         } else {
-          // Fetch all lessons for the user's journey to find the next one
+          // Fetch all lessons in the course to find the next one
           const { data: allLessons } = await supabase
             .from('lessons')
             .select('*')
-            .eq('journey_id', journeyId)
             .order('dia', { ascending: true })
             .order('created_at', { ascending: true });
 
           let nextLesson = allLessons?.find(l => !completedIds.has(l.id));
 
-          // If no lessons found for this journey, try all lessons as fallback
+          // If no lessons found, try all lessons as fallback
           if (!nextLesson && (!allLessons || allLessons.length === 0)) {
             const { data: fallbackLessons } = await supabase
               .from('lessons')
@@ -147,15 +133,6 @@ export default function Page() {
         }
         setLessonLoading(false);
 
-        // Fetch Recommended Journeys
-        const { data: journeysData } = await supabase
-          .from('journeys')
-          .select('*')
-          .limit(6);
-
-        if (isMounted && journeysData) {
-          setFeaturedJourneys(journeysData);
-        }
       } catch (err) {
         console.error('Error fetching home data:', err);
       } finally {
@@ -229,7 +206,7 @@ export default function Page() {
                       </div>
                       <h3 className="text-xl font-bold text-slate-900 mb-2 font-display">Consultor</h3>
                       <p className="text-sm text-slate-600 leading-relaxed mb-4">
-                        Tire suas dúvidas com orientação personalizada e suporte para sua jornada.
+                        Tire suas dúvidas com orientação personalizada e suporte para seu curso.
                       </p>
                       <div className="flex items-center gap-2 text-xs font-bold text-primary uppercase tracking-widest">
                         Falar com Consultor
