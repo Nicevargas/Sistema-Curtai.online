@@ -29,7 +29,7 @@ export default function Hero() {
             transition={{ delay: 0.4 }}
             className="text-slate-100 tracking-tight text-[32px] font-bold leading-tight font-display"
           >
-            A nova identidade feminina
+          
           </motion.h1>
         </div>
       </motion.div>
