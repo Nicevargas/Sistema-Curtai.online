@@ -253,7 +253,7 @@ export default function PerfilPage() {
               <div className="space-y-4">
                 <div>
                   <h1 className="text-3xl font-bold text-slate-900 font-display mb-2">
-                    {profile?.name || 'Buscador Mistika'}
+                    {profile?.name || 'Buscador'}
                   </h1>
                   {profile?.bio && (
                     <p className="text-base text-slate-600 italic leading-relaxed max-w-sm">

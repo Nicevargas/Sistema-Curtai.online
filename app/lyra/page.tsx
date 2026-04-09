@@ -18,7 +18,7 @@ interface Message {
 
 export default function LyraPage() {
   const [messages, setMessages] = useState<Message[]>([
-    { role: 'model', text: 'Saudações, buscador. Eu sou Lyra, sua conselheira mística. Em que posso orientar seu curso hoje?' }
+    { role: 'model', text: 'Saudações, buscador. Eu sou Lyra, sua conselheira espiritual. Em que posso orientar seu curso hoje?' }
   ]);
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
@@ -52,16 +52,15 @@ export default function LyraPage() {
 
     try {
       const chat = ai.chats.create({
-        model: "gemini-3-flash-preview",
-        config: {
-          systemInstruction: "Você é Lyra, uma conselheira mística e mentora espiritual do aplicativo Mistika. Sua voz é serena, sábia, empática e levemente poética. Você ajuda os usuários em seu curso de autoconhecimento, espiritualidade e desenvolvimento pessoal. Use metáforas relacionadas à luz, estrelas, natureza e mistérios antigos. Mantenha as respostas concisas mas profundas. Nunca saia do personagem.",
-        },
-      });
-
-      const response = await chat.sendMessage({ message: userMessage });
-      const botText = response.text;
-      
-      setMessages(prev => [...prev, { role: 'model', text: botText || "As estrelas estão silenciosas no momento, mas a luz retornará em breve." }]);
+          model: "gemini-3-flash-preview",
+          config: {
+            systemInstruction: "Você é Lyra, uma conselheira espiritual serena, sábia e empática. Você ajuda os usuários em sua jornada de autoconhecimento, espiritualidade e desenvolvimento pessoal. Use metáforas relacionadas à luz, estrelas, natureza e mistérios antigos. Mantenha as respostas concisas mas profundas. Nunca saia do personagem.",
+          },
+        });
+        const response = await chat.sendMessage({ message: userMessage });
+        const botText = response.text;
+        
+        setMessages(prev => [...prev, { role: 'model', text: botText || "As estrelas estão silenciosas no momento, mas a luz retornará em breve." }]);
     } catch (error) {
       console.error('Erro na conversa com Lyra:', error);
       setMessages(prev => [...prev, { role: 'model', text: "Houve uma interferência nas energias. Por favor, tente novamente em um momento de maior clareza." }]);

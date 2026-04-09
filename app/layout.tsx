@@ -3,7 +3,7 @@ import './globals.css';
 import SubscriptionGuard from '@/components/SubscriptionGuard';
 
 export const metadata: Metadata = {
-  title: 'Mistika - Curso Online',
+  title: 'Curtai - Curso Online',
   description: 'A nova identidade feminina - Dia 01',
   icons: {
     icon: 'https://curtai.online/favicon_curtai.png',

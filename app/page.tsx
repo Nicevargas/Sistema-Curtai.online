@@ -189,82 +189,6 @@ export default function Page() {
             {/* Action Cards Section */}
             <section className="px-4 sm:px-0">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {/* Counselor Lyra Card */}
-                <Link href="/lyra">
-                  <motion.div 
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    whileHover={{ y: -4 }}
-                    className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-primary/20 to-accent-purple/20 border border-primary/20 p-6 h-full group"
-                  >
-                    <div className="absolute top-0 right-0 -mt-4 -mr-4 size-32 bg-primary/10 rounded-full blur-3xl group-hover:bg-primary/20 transition-colors" />
-                    <div className="relative z-10">
-                      <div className="size-12 rounded-2xl bg-primary/20 flex items-center justify-center mb-4">
-                        <MessageSquare className="size-6 text-primary" />
-                      </div>
-                      <h3 className="text-xl font-bold text-slate-900 mb-2 font-display">Conselheira Lyra</h3>
-                      <p className="text-sm text-slate-600 leading-relaxed mb-4">
-                        Inicie uma conversa sagrada e receba orientações personalizadas para seu curso.
-                      </p>
-                      <div className="flex items-center gap-2 text-xs font-bold text-primary uppercase tracking-widest">
-                        Conversar Agora
-                        <Sparkles className="size-3" />
-                      </div>
-                    </div>
-                  </motion.div>
-                </Link>
-
-                {/* Escrita Terapêutica Card */}
-                <Link href="/escrita">
-                  <motion.div 
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    whileHover={{ y: -4 }}
-                    className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-emerald-500/20 to-teal-500/20 border border-emerald-500/20 p-6 h-full group"
-                  >
-                    <div className="absolute top-0 right-0 -mt-4 -mr-4 size-32 bg-emerald-500/10 rounded-full blur-3xl group-hover:bg-emerald-500/20 transition-colors" />
-                    <div className="relative z-10">
-                      <div className="size-12 rounded-2xl bg-emerald-500/20 flex items-center justify-center mb-4">
-                        <PenTool className="size-6 text-emerald-500" />
-                      </div>
-                      <h3 className="text-xl font-bold text-slate-900 mb-2 font-display">Escrita Terapêutica</h3>
-                      <p className="text-sm text-slate-600 leading-relaxed mb-4">
-                        Liberte suas emoções e organize seus pensamentos através do poder da escrita guiada.
-                      </p>
-                      <div className="flex items-center gap-2 text-xs font-bold text-emerald-500 uppercase tracking-widest">
-                        Começar a Escrever
-                      </div>
-                    </div>
-                  </motion.div>
-                </Link>
-
-                {/* Planner Lei da Atração Card */}
-                <Link href="/planner">
-                  <motion.div 
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    whileHover={{ y: -4 }}
-                    className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-accent-gold/20 to-orange-500/20 border border-accent-gold/20 p-6 h-full group"
-                  >
-                    <div className="absolute top-0 right-0 -mt-4 -mr-4 size-32 bg-accent-gold/10 rounded-full blur-3xl group-hover:bg-accent-gold/20 transition-colors" />
-                    <div className="relative z-10">
-                      <div className="size-12 rounded-2xl bg-accent-gold/20 flex items-center justify-center mb-4">
-                        <Target className="size-6 text-accent-gold" />
-                      </div>
-                      <h3 className="text-xl font-bold text-slate-900 mb-2 font-display">Planner Lei da Atração</h3>
-                      <p className="text-sm text-slate-600 leading-relaxed mb-4">
-                        Manifeste seus desejos e planeje sua realidade com as leis universais.
-                      </p>
-                      <div className="flex items-center gap-2 text-xs font-bold text-accent-gold uppercase tracking-widest">
-                        Manifestar Agora
-                      </div>
-                    </div>
-                  </motion.div>
-                </Link>
-
                 {/* Community Card */}
                 <Link href="/comunidade">
                   <motion.div 
@@ -278,12 +202,38 @@ export default function Page() {
                       <div className="size-12 rounded-2xl bg-slate-100 flex items-center justify-center mb-4">
                         <Users2 className="size-6 text-slate-500" />
                       </div>
-                      <h3 className="text-xl font-bold text-slate-900 mb-2 font-display">Comunidade Mistika</h3>
+                      <h3 className="text-xl font-bold text-slate-900 mb-2 font-display">Comunidade</h3>
                       <p className="text-sm text-slate-600 leading-relaxed mb-4">
-                        Explore os principais assuntos discutidos pela egrégora e conecte-se com outros buscadores.
+                        Conecte-se com outros membros, participe de discussões e compartilhe experiências.
                       </p>
                       <div className="flex items-center gap-2 text-xs font-bold text-slate-500 uppercase tracking-widest">
                         Ver Discussões
+                      </div>
+                    </div>
+                  </motion.div>
+                </Link>
+
+                {/* Consultant Card */}
+                <Link href="/lyra">
+                  <motion.div 
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    whileHover={{ y: -4 }}
+                    className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-primary/20 to-accent-purple/20 border border-primary/20 p-6 h-full group"
+                  >
+                    <div className="absolute top-0 right-0 -mt-4 -mr-4 size-32 bg-primary/10 rounded-full blur-3xl group-hover:bg-primary/20 transition-colors" />
+                    <div className="relative z-10">
+                      <div className="size-12 rounded-2xl bg-primary/20 flex items-center justify-center mb-4">
+                        <MessageSquare className="size-6 text-primary" />
+                      </div>
+                      <h3 className="text-xl font-bold text-slate-900 mb-2 font-display">Consultor</h3>
+                      <p className="text-sm text-slate-600 leading-relaxed mb-4">
+                        Tire suas dúvidas com orientação personalizada e suporte para sua jornada.
+                      </p>
+                      <div className="flex items-center gap-2 text-xs font-bold text-primary uppercase tracking-widest">
+                        Falar com Consultor
+                        <Sparkles className="size-3" />
                       </div>
                     </div>
                   </motion.div>

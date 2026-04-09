@@ -166,7 +166,7 @@ export default function FeaturedLesson({ lesson, loading }: FeaturedLessonProps)
                 className="absolute inset-0"
               >
                 <Image 
-                  src={getDirectDriveLink(lesson.capa_url) || "https://picsum.photos/seed/mistika/1280/720"}
+                  src={getDirectDriveLink(lesson.capa_url) || "https://picsum.photos/seed/curso/1280/720"}
                   alt={lesson.titulo}
                   fill
                   className="object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-500"
