@@ -1,6 +1,6 @@
 'use client';
 
-import { Home, Sparkles, Users, User, ShieldCheck } from 'lucide-react';
+import { Home, Sparkles, Users, User, ShieldCheck, Share2 } from 'lucide-react';
 import { motion } from 'motion/react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -32,6 +32,7 @@ export default function BottomNav() {
   const navItems = [
     { icon: Home, label: 'Início', href: '/' },
     { icon: Sparkles, label: 'Curso', href: '/jornada' },
+    { icon: Share2, label: 'Mapa', href: '/mapa' },
     { icon: Users, label: 'Comunidade', href: '/comunidade' },
     ...(isAdmin ? [{ icon: ShieldCheck, label: 'Admin', href: '/perfil' }] : []),
     { icon: User, label: 'Perfil', href: '/perfil' },

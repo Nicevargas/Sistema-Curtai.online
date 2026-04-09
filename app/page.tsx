@@ -40,8 +40,6 @@ export default function Page() {
   const [loading, setLoading] = useState(true);
   const [lessonLoading, setLessonLoading] = useState(true);
   const [activeVideo, setActiveVideo] = useState<string | null>(null);
-  const [isRestrictedAppsUnlocked, setIsRestrictedAppsUnlocked] = useState(false);
-  const [daysRemaining, setDaysRemaining] = useState(0);
 
   useEffect(() => {
     let isMounted = true;
@@ -158,19 +156,6 @@ export default function Page() {
         if (isMounted && journeysData) {
           setFeaturedJourneys(journeysData);
         }
-
-        // Check Lyra Unlock Status (7 days after registration)
-        const registrationDate = new Date(user.created_at);
-        const currentDate = new Date();
-        const diffTime = currentDate.getTime() - registrationDate.getTime();
-        const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-        
-        if (diffDays >= 7) {
-          setIsRestrictedAppsUnlocked(true);
-        } else {
-          setIsRestrictedAppsUnlocked(false);
-          setDaysRemaining(Math.max(1, 7 - diffDays));
-        }
       } catch (err) {
         console.error('Error fetching home data:', err);
       } finally {
@@ -205,164 +190,80 @@ export default function Page() {
             <section className="px-4 sm:px-0">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {/* Counselor Lyra Card */}
-                {isRestrictedAppsUnlocked ? (
-                  <Link href="/lyra">
-                    <motion.div 
-                      initial={{ opacity: 0, y: 20 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      viewport={{ once: true }}
-                      whileHover={{ y: -4 }}
-                      className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-primary/20 to-accent-purple/20 border border-primary/20 p-6 h-full group"
-                    >
-                      <div className="absolute top-0 right-0 -mt-4 -mr-4 size-32 bg-primary/10 rounded-full blur-3xl group-hover:bg-primary/20 transition-colors" />
-                      <div className="relative z-10">
-                        <div className="size-12 rounded-2xl bg-primary/20 flex items-center justify-center mb-4">
-                          <MessageSquare className="size-6 text-primary" />
-                        </div>
-                        <h3 className="text-xl font-bold text-slate-900 mb-2 font-display">Conselheira Lyra</h3>
-                        <p className="text-sm text-slate-600 leading-relaxed mb-4">
-                          Inicie uma conversa sagrada e receba orientações personalizadas para seu curso.
-                        </p>
-                        <div className="flex items-center gap-2 text-xs font-bold text-primary uppercase tracking-widest">
-                          Conversar Agora
-                          <Sparkles className="size-3" />
-                        </div>
+                <Link href="/lyra">
+                  <motion.div 
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    whileHover={{ y: -4 }}
+                    className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-primary/20 to-accent-purple/20 border border-primary/20 p-6 h-full group"
+                  >
+                    <div className="absolute top-0 right-0 -mt-4 -mr-4 size-32 bg-primary/10 rounded-full blur-3xl group-hover:bg-primary/20 transition-colors" />
+                    <div className="relative z-10">
+                      <div className="size-12 rounded-2xl bg-primary/20 flex items-center justify-center mb-4">
+                        <MessageSquare className="size-6 text-primary" />
                       </div>
-                    </motion.div>
-                  </Link>
-                ) : (
-                  <div className="cursor-not-allowed">
-                    <motion.div 
-                      initial={{ opacity: 0, y: 20 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      viewport={{ once: true }}
-                      className="relative overflow-hidden rounded-3xl bg-white/5 border border-white/10 p-6 h-full group grayscale opacity-60"
-                    >
-                      <div className="absolute top-4 right-4 flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/20 border border-amber-500/30 text-amber-500">
-                        <Clock className="size-3" />
-                        <span className="text-[10px] font-bold uppercase tracking-widest">Em Breve</span>
+                      <h3 className="text-xl font-bold text-slate-900 mb-2 font-display">Conselheira Lyra</h3>
+                      <p className="text-sm text-slate-600 leading-relaxed mb-4">
+                        Inicie uma conversa sagrada e receba orientações personalizadas para seu curso.
+                      </p>
+                      <div className="flex items-center gap-2 text-xs font-bold text-primary uppercase tracking-widest">
+                        Conversar Agora
+                        <Sparkles className="size-3" />
                       </div>
-                      <div className="relative z-10">
-                        <div className="size-12 rounded-2xl bg-slate-100 flex items-center justify-center mb-4">
-                          <MessageSquare className="size-6 text-slate-400" />
-                        </div>
-                        <h3 className="text-xl font-bold text-slate-500 mb-2 font-display">Conselheira Lyra</h3>
-                        <p className="text-sm text-slate-500 leading-relaxed mb-4">
-                          Esta mentora mística estará disponível para você em {daysRemaining} {daysRemaining === 1 ? 'dia' : 'dias'}.
-                        </p>
-                        <div className="flex items-center gap-2 text-xs font-bold text-slate-600 uppercase tracking-widest">
-                          Aguardando Alinhamento
-                        </div>
-                      </div>
-                    </motion.div>
-                  </div>
-                )}
+                    </div>
+                  </motion.div>
+                </Link>
 
                 {/* Escrita Terapêutica Card */}
-                {isRestrictedAppsUnlocked ? (
-                  <Link href="/escrita">
-                    <motion.div 
-                      initial={{ opacity: 0, y: 20 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      viewport={{ once: true }}
-                      whileHover={{ y: -4 }}
-                      className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-emerald-500/20 to-teal-500/20 border border-emerald-500/20 p-6 h-full group"
-                    >
-                      <div className="absolute top-0 right-0 -mt-4 -mr-4 size-32 bg-emerald-500/10 rounded-full blur-3xl group-hover:bg-emerald-500/20 transition-colors" />
-                      <div className="relative z-10">
-                        <div className="size-12 rounded-2xl bg-emerald-500/20 flex items-center justify-center mb-4">
-                          <PenTool className="size-6 text-emerald-500" />
-                        </div>
-                        <h3 className="text-xl font-bold text-slate-900 mb-2 font-display">Escrita Terapêutica</h3>
-                        <p className="text-sm text-slate-600 leading-relaxed mb-4">
-                          Liberte suas emoções e organize seus pensamentos através do poder da escrita guiada.
-                        </p>
-                        <div className="flex items-center gap-2 text-xs font-bold text-emerald-500 uppercase tracking-widest">
-                          Começar a Escrever
-                        </div>
+                <Link href="/escrita">
+                  <motion.div 
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    whileHover={{ y: -4 }}
+                    className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-emerald-500/20 to-teal-500/20 border border-emerald-500/20 p-6 h-full group"
+                  >
+                    <div className="absolute top-0 right-0 -mt-4 -mr-4 size-32 bg-emerald-500/10 rounded-full blur-3xl group-hover:bg-emerald-500/20 transition-colors" />
+                    <div className="relative z-10">
+                      <div className="size-12 rounded-2xl bg-emerald-500/20 flex items-center justify-center mb-4">
+                        <PenTool className="size-6 text-emerald-500" />
                       </div>
-                    </motion.div>
-                  </Link>
-                ) : (
-                  <div className="cursor-not-allowed">
-                    <motion.div 
-                      initial={{ opacity: 0, y: 20 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      viewport={{ once: true }}
-                      className="relative overflow-hidden rounded-3xl bg-white/5 border border-white/10 p-6 h-full group grayscale opacity-60"
-                    >
-                      <div className="absolute top-4 right-4 flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/20 border border-amber-500/30 text-amber-500">
-                        <Clock className="size-3" />
-                        <span className="text-[10px] font-bold uppercase tracking-widest">Em Breve</span>
+                      <h3 className="text-xl font-bold text-slate-900 mb-2 font-display">Escrita Terapêutica</h3>
+                      <p className="text-sm text-slate-600 leading-relaxed mb-4">
+                        Liberte suas emoções e organize seus pensamentos através do poder da escrita guiada.
+                      </p>
+                      <div className="flex items-center gap-2 text-xs font-bold text-emerald-500 uppercase tracking-widest">
+                        Começar a Escrever
                       </div>
-                      <div className="relative z-10">
-                        <div className="size-12 rounded-2xl bg-slate-100 flex items-center justify-center mb-4">
-                          <PenTool className="size-6 text-slate-400" />
-                        </div>
-                        <h3 className="text-xl font-bold text-slate-500 mb-2 font-display">Escrita Terapêutica</h3>
-                        <p className="text-sm text-slate-500 leading-relaxed mb-4">
-                          Esta ferramenta de cura estará disponível para você em {daysRemaining} {daysRemaining === 1 ? 'dia' : 'dias'}.
-                        </p>
-                        <div className="flex items-center gap-2 text-xs font-bold text-slate-600 uppercase tracking-widest">
-                          Aguardando Alinhamento
-                        </div>
-                      </div>
-                    </motion.div>
-                  </div>
-                )}
+                    </div>
+                  </motion.div>
+                </Link>
 
                 {/* Planner Lei da Atração Card */}
-                {isRestrictedAppsUnlocked ? (
-                  <Link href="/planner">
-                    <motion.div 
-                      initial={{ opacity: 0, y: 20 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      viewport={{ once: true }}
-                      whileHover={{ y: -4 }}
-                      className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-accent-gold/20 to-orange-500/20 border border-accent-gold/20 p-6 h-full group"
-                    >
-                      <div className="absolute top-0 right-0 -mt-4 -mr-4 size-32 bg-accent-gold/10 rounded-full blur-3xl group-hover:bg-accent-gold/20 transition-colors" />
-                      <div className="relative z-10">
-                        <div className="size-12 rounded-2xl bg-accent-gold/20 flex items-center justify-center mb-4">
-                          <Target className="size-6 text-accent-gold" />
-                        </div>
-                        <h3 className="text-xl font-bold text-slate-900 mb-2 font-display">Planner Lei da Atração</h3>
-                        <p className="text-sm text-slate-600 leading-relaxed mb-4">
-                          Manifeste seus desejos e planeje sua realidade com as leis universais.
-                        </p>
-                        <div className="flex items-center gap-2 text-xs font-bold text-accent-gold uppercase tracking-widest">
-                          Manifestar Agora
-                        </div>
+                <Link href="/planner">
+                  <motion.div 
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    whileHover={{ y: -4 }}
+                    className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-accent-gold/20 to-orange-500/20 border border-accent-gold/20 p-6 h-full group"
+                  >
+                    <div className="absolute top-0 right-0 -mt-4 -mr-4 size-32 bg-accent-gold/10 rounded-full blur-3xl group-hover:bg-accent-gold/20 transition-colors" />
+                    <div className="relative z-10">
+                      <div className="size-12 rounded-2xl bg-accent-gold/20 flex items-center justify-center mb-4">
+                        <Target className="size-6 text-accent-gold" />
                       </div>
-                    </motion.div>
-                  </Link>
-                ) : (
-                  <div className="cursor-not-allowed">
-                    <motion.div 
-                      initial={{ opacity: 0, y: 20 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      viewport={{ once: true }}
-                      className="relative overflow-hidden rounded-3xl bg-white/5 border border-white/10 p-6 h-full group grayscale opacity-60"
-                    >
-                      <div className="absolute top-4 right-4 flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/20 border border-amber-500/30 text-amber-500">
-                        <Clock className="size-3" />
-                        <span className="text-[10px] font-bold uppercase tracking-widest">Em Breve</span>
+                      <h3 className="text-xl font-bold text-slate-900 mb-2 font-display">Planner Lei da Atração</h3>
+                      <p className="text-sm text-slate-600 leading-relaxed mb-4">
+                        Manifeste seus desejos e planeje sua realidade com as leis universais.
+                      </p>
+                      <div className="flex items-center gap-2 text-xs font-bold text-accent-gold uppercase tracking-widest">
+                        Manifestar Agora
                       </div>
-                      <div className="relative z-10">
-                        <div className="size-12 rounded-2xl bg-slate-100 flex items-center justify-center mb-4">
-                          <Target className="size-6 text-slate-400" />
-                        </div>
-                        <h3 className="text-xl font-bold text-slate-500 mb-2 font-display">Planner Lei da Atração</h3>
-                        <p className="text-sm text-slate-500 leading-relaxed mb-4">
-                          Este guia de manifestação estará disponível para você em {daysRemaining} {daysRemaining === 1 ? 'dia' : 'dias'}.
-                        </p>
-                        <div className="flex items-center gap-2 text-xs font-bold text-slate-600 uppercase tracking-widest">
-                          Aguardando Alinhamento
-                        </div>
-                      </div>
-                    </motion.div>
-                  </div>
-                )}
+                    </div>
+                  </motion.div>
+                </Link>
 
                 {/* Community Card */}
                 <Link href="/comunidade">

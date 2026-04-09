@@ -17,16 +17,7 @@ export default function EscritaPage() {
     async function checkAccess() {
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
-        const registrationDate = new Date(user.created_at);
-        const currentDate = new Date();
-        const diffTime = currentDate.getTime() - registrationDate.getTime();
-        const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-        
-        if (diffDays < 7) {
-          window.location.href = '/';
-        } else {
-          setLoading(false);
-        }
+        setLoading(false);
       } else {
         window.location.href = '/login';
       }

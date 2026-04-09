@@ -27,16 +27,7 @@ export default function LyraPage() {
   useEffect(() => {
     async function checkAccess() {
       const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        const registrationDate = new Date(user.created_at);
-        const currentDate = new Date();
-        const diffTime = currentDate.getTime() - registrationDate.getTime();
-        const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-        
-        if (diffDays < 7) {
-          window.location.href = '/';
-        }
-      } else {
+      if (!user) {
         window.location.href = '/login';
       }
     }
@@ -67,8 +58,8 @@ export default function LyraPage() {
         },
       });
 
-      const result = await chat.sendMessage({ message: userMessage });
-      const botText = result.response.text;
+      const response = await chat.sendMessage({ message: userMessage });
+      const botText = response.text;
       
       setMessages(prev => [...prev, { role: 'model', text: botText || "As estrelas estão silenciosas no momento, mas a luz retornará em breve." }]);
     } catch (error) {
@@ -80,17 +71,17 @@ export default function LyraPage() {
   };
 
   return (
-    <main className="min-h-screen bg-background-dark flex flex-col relative pb-20">
+    <main className="min-h-screen bg-white flex flex-col relative pb-20">
       <Header />
       
       {/* Chat Header */}
-      <div className="bg-background-dark/50 backdrop-blur-md border-b border-white/5 p-4 flex items-center gap-4 sticky top-[73px] z-40">
+      <div className="bg-white/80 backdrop-blur-md border-b border-slate-100 p-4 flex items-center gap-4 sticky top-[73px] z-40">
         <div className="flex items-center gap-3">
-          <div className="size-10 rounded-full bg-primary/20 flex items-center justify-center border border-primary/30 shadow-lg shadow-primary/10">
+          <div className="size-10 rounded-full bg-primary/10 flex items-center justify-center border border-primary/20 shadow-lg shadow-primary/5">
             <Sparkles className="size-5 text-primary" />
           </div>
           <div>
-            <h1 className="text-sm font-bold text-slate-100 font-display">Conselheira Lyra</h1>
+            <h1 className="text-sm font-bold text-slate-900 font-display">Conselheira Lyra</h1>
             <div className="flex items-center gap-1.5">
               <div className="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
               <span className="text-[10px] text-slate-500 uppercase tracking-widest font-medium">Em sintonia</span>
@@ -111,15 +102,15 @@ export default function LyraPage() {
             <div className={`flex gap-3 max-w-[85%] ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}>
               <div className={`size-8 rounded-full flex items-center justify-center shrink-0 border ${
                 msg.role === 'user' 
-                  ? 'bg-white/5 border-white/10' 
+                  ? 'bg-slate-100 border-slate-200' 
                   : 'bg-primary/10 border-primary/20'
               }`}>
-                {msg.role === 'user' ? <User className="size-4 text-slate-400" /> : <Bot className="size-4 text-primary" />}
+                {msg.role === 'user' ? <User className="size-4 text-slate-500" /> : <Bot className="size-4 text-primary" />}
               </div>
               <div className={`p-4 rounded-2xl text-sm leading-relaxed ${
                 msg.role === 'user'
-                  ? 'bg-primary text-white rounded-tr-none'
-                  : 'bg-white/5 text-slate-200 border border-white/10 rounded-tl-none'
+                  ? 'bg-primary text-white rounded-tr-none shadow-lg shadow-primary/20'
+                  : 'bg-slate-50 text-slate-700 border border-slate-200 rounded-tl-none'
               }`}>
                 {msg.text}
               </div>
@@ -136,7 +127,7 @@ export default function LyraPage() {
               <div className="size-8 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center">
                 <Bot className="size-4 text-primary" />
               </div>
-              <div className="bg-white/5 border border-white/10 p-4 rounded-2xl rounded-tl-none flex gap-1">
+              <div className="bg-slate-50 border border-slate-200 p-4 rounded-2xl rounded-tl-none flex gap-1">
                 <motion.div animate={{ opacity: [0.4, 1, 0.4] }} transition={{ repeat: Infinity, duration: 1 }} className="size-1.5 rounded-full bg-primary" />
                 <motion.div animate={{ opacity: [0.4, 1, 0.4] }} transition={{ repeat: Infinity, duration: 1, delay: 0.2 }} className="size-1.5 rounded-full bg-primary" />
                 <motion.div animate={{ opacity: [0.4, 1, 0.4] }} transition={{ repeat: Infinity, duration: 1, delay: 0.4 }} className="size-1.5 rounded-full bg-primary" />
@@ -148,7 +139,7 @@ export default function LyraPage() {
       </div>
 
       {/* Input Area */}
-      <div className="p-4 sticky bottom-20 z-40 bg-background-dark/80 backdrop-blur-xl border-t border-white/5">
+      <div className="p-4 sticky bottom-20 z-40 bg-white/80 backdrop-blur-xl border-t border-slate-100">
         <div className="max-w-2xl mx-auto relative">
           <input
             type="text"
@@ -156,7 +147,7 @@ export default function LyraPage() {
             onChange={(e) => setInput(e.target.value)}
             onKeyPress={(e) => e.key === 'Enter' && handleSend()}
             placeholder="Sussurre sua dúvida para Lyra..."
-            className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-6 pr-14 text-sm text-slate-200 focus:outline-none focus:border-primary/50 transition-all placeholder:text-slate-600"
+            className="w-full bg-slate-50 border border-slate-200 rounded-2xl py-4 pl-6 pr-14 text-sm text-slate-900 focus:outline-none focus:border-primary/50 transition-all placeholder:text-slate-400"
           />
           <button
             onClick={handleSend}
