@@ -1,18 +1,6 @@
 import type {Metadata} from 'next';
-import { Newsreader, Inter } from 'next/font/google';
 import './globals.css';
 import SubscriptionGuard from '@/components/SubscriptionGuard';
-
-const newsreader = Newsreader({
-  subsets: ['latin'],
-  variable: '--font-display',
-  weight: ['200', '300', '400', '500', '600', '700', '800'],
-});
-
-const inter = Inter({
-  subsets: ['latin'],
-  variable: '--font-sans',
-});
 
 export const metadata: Metadata = {
   title: 'Mistika - Curso Online',
@@ -24,7 +12,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({children}: {children: React.ReactNode}) {
   return (
-    <html lang="pt-br" className={`${newsreader.variable} ${inter.variable}`}>
+    <html lang="pt-br">
       <head />
       <body className="bg-white text-slate-900 min-h-screen font-sans" suppressHydrationWarning>
         <SubscriptionGuard>
