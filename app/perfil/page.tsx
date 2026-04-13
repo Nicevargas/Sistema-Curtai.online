@@ -369,15 +369,11 @@ export default function PerfilPage() {
                       <Settings className="size-4" />
                       Painel Administrativo
                     </h2>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div className="grid grid-cols-1 gap-3">
                       <Link href="/admin" className="text-left p-4 rounded-2xl bg-slate-50 hover:bg-slate-100 transition-colors text-sm text-slate-800 flex items-center justify-between group">
-                        <span>Gerenciar Vídeos</span>
+                        <span className="font-bold">Acessar Dashboard Administrativo</span>
                         <ArrowRight className="size-4 text-slate-400 group-hover:translate-x-1 transition-transform" />
                       </Link>
-                      <button className="text-left p-4 rounded-2xl bg-slate-50 hover:bg-slate-100 transition-colors text-sm text-slate-800 flex items-center justify-between group">
-                        <span>Gerenciar Membros</span>
-                        <ArrowRight className="size-4 text-slate-400 group-hover:translate-x-1 transition-transform" />
-                      </button>
                     </div>
                   </div>
                 )}
