@@ -189,7 +189,7 @@ export default function Page() {
             {/* Action Cards Section */}
             <section className="px-4 sm:px-0">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {/* Counselor Lyra Card */}
+                {/* Course Consultant Lyra Card */}
                 <Link href="/lyra">
                   <motion.div 
                     initial={{ opacity: 0, y: 20 }}

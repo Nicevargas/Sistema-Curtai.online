@@ -15,7 +15,7 @@ interface Message {
 
 export default function LyraPage() {
   const [messages, setMessages] = useState<Message[]>([
-    { role: 'model', text: 'Saudações, buscador. Eu sou Lyra, sua conselheira mística. Em que posso orientar seu curso hoje?' }
+    { role: 'model', text: 'Olá! Eu sou Lyra, sua consultora de curso. Como posso ajudar na sua jornada de aprendizado hoje?' }
   ]);
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
@@ -54,7 +54,7 @@ export default function LyraPage() {
       const chat = ai.chats.create({
         model: "gemini-3-flash-preview",
         config: {
-          systemInstruction: "Você é Lyra, uma conselheira mística e mentora espiritual do aplicativo Curso. Sua voz é serena, sábia, empática e levemente poética. Você ajuda os usuários em seu curso de autoconhecimento, espiritualidade e desenvolvimento pessoal. Use metáforas relacionadas à luz, estrelas, natureza e mistérios antigos. Mantenha as respostas concisas mas profundas. Nunca saia do personagem.",
+          systemInstruction: "Você é Lyra, a consultora de curso inteligente e prestativa do aplicativo Curso. Sua voz é profissional, encorajadora, clara e eficiente. Você ajuda os usuários a navegarem em sua jornada de aprendizado, tirando dúvidas sobre o conteúdo, sugerindo caminhos de estudo e motivando o progresso. Mantenha as respostas concisas, práticas e úteis. Nunca saia do personagem.",
         },
         history: messages.map(m => ({
           role: m.role === 'model' ? 'model' : 'user',
@@ -65,10 +65,10 @@ export default function LyraPage() {
       const response = await chat.sendMessage({ message: userMessage });
       const botText = response.text;
       
-      setMessages(prev => [...prev, { role: 'model', text: botText || "As estrelas estão silenciosas no momento, mas a luz retornará em breve." }]);
+      setMessages(prev => [...prev, { role: 'model', text: botText || "Desculpe, tive um problema técnico. Posso ajudar com mais alguma dúvida sobre o curso?" }]);
     } catch (error) {
       console.error('Erro na conversa com Lyra:', error);
-      setMessages(prev => [...prev, { role: 'model', text: "Houve uma interferência nas energias. Por favor, tente novamente em um momento de maior clareza." }]);
+      setMessages(prev => [...prev, { role: 'model', text: "Desculpe, ocorreu um erro na conexão. Por favor, tente novamente em instantes." }]);
     } finally {
       setIsTyping(false);
     }
@@ -85,10 +85,10 @@ export default function LyraPage() {
             <Sparkles className="size-5 text-primary" />
           </div>
           <div>
-            <h1 className="text-sm font-bold text-slate-900 font-display">Conselheira Lyra</h1>
+            <h1 className="text-sm font-bold text-slate-900 font-display">Consultora Lyra</h1>
             <div className="flex items-center gap-1.5">
               <div className="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
-              <span className="text-[10px] text-slate-500 uppercase tracking-widest font-medium">Em sintonia</span>
+              <span className="text-[10px] text-slate-500 uppercase tracking-widest font-medium">Online</span>
             </div>
           </div>
         </div>
@@ -150,7 +150,7 @@ export default function LyraPage() {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyPress={(e) => e.key === 'Enter' && handleSend()}
-            placeholder="Sussurre sua dúvida para Lyra..."
+            placeholder="Digite sua dúvida sobre o curso..."
             className="w-full bg-slate-50 border border-slate-200 rounded-2xl py-4 pl-6 pr-14 text-sm text-slate-900 focus:outline-none focus:border-primary/50 transition-all placeholder:text-slate-400"
           />
           <button
@@ -162,7 +162,7 @@ export default function LyraPage() {
           </button>
         </div>
         <p className="text-center text-[10px] text-slate-600 mt-3 uppercase tracking-widest">
-          As palavras de Lyra são guias, não verdades absolutas.
+          Lyra é uma assistente virtual focada em auxiliar seu progresso no curso.
         </p>
       </div>
 
