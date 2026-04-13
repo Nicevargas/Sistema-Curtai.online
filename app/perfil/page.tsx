@@ -309,12 +309,12 @@ export default function PerfilPage() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">Mantra / Bio</label>
+                  <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">Bio</label>
                   <textarea 
                     value={editBio}
                     onChange={(e) => setEditBio(e.target.value)}
                     className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-slate-800 focus:outline-none focus:border-primary/50 min-h-[80px]"
-                    placeholder="Seu mantra pessoal..."
+                    placeholder="Quem é você?..."
                   />
                 </div>
                 <div className="space-y-2">
