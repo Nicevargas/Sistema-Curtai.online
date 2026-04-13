@@ -19,13 +19,18 @@ export function getDirectDriveLink(url: string | null | undefined): string {
     if (url.includes('/file/d/')) {
       fileId = url.split('/file/d/')[1].split('/')[0].split('?')[0];
     } else if (url.includes('id=')) {
-      const urlParams = new URLSearchParams(url.split('?')[1]);
-      fileId = urlParams.get('id') || '';
+      const parts = url.split('?');
+      if (parts.length > 1) {
+        const urlParams = new URLSearchParams(parts[1]);
+        fileId = urlParams.get('id') || '';
+      }
+    } else if (url.includes('/d/')) {
+      fileId = url.split('/d/')[1].split('/')[0].split('?')[0];
     }
 
     if (fileId) {
-      // Retorna o link de visualização direta (thumbnail/uc)
-      return `https://drive.google.com/uc?export=view&id=${fileId}`;
+      // Retorna o link de visualização direta mais confiável para o Next.js Image
+      return `https://lh3.googleusercontent.com/d/${fileId}`;
     }
   } catch (e) {
     console.error('Erro ao converter link do Google Drive:', e);
