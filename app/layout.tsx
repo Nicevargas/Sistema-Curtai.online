@@ -14,7 +14,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: 'Mistika - Curso Online',
+  title: 'Curso - Curso Online',
   description: 'A nova identidade feminina - Dia 01',
   icons: {
     icon: 'https://curtai.online/favicon_curtai.png',

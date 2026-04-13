@@ -5,11 +5,8 @@ import BottomNav from '@/components/BottomNav';
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Send, Sparkles, User, Bot, ArrowLeft } from 'lucide-react';
-import { GoogleGenAI } from "@google/genai";
 import { supabase } from '@/lib/supabase';
 import Link from 'next/link';
-
-const ai = new GoogleGenAI({ apiKey: process.env.NEXT_PUBLIC_GEMINI_API_KEY });
 
 interface Message {
   role: 'user' | 'model';
@@ -51,10 +48,13 @@ export default function LyraPage() {
     setIsTyping(true);
 
     try {
+      const { GoogleGenAI } = await import("@google/genai");
+      const ai = new GoogleGenAI({ apiKey: process.env.NEXT_PUBLIC_GEMINI_API_KEY });
+      
       const chat = ai.chats.create({
-        model: "gemini-3-flash-preview",
+        model: "gemini-1.5-flash",
         config: {
-          systemInstruction: "Você é Lyra, uma conselheira mística e mentora espiritual do aplicativo Mistika. Sua voz é serena, sábia, empática e levemente poética. Você ajuda os usuários em seu curso de autoconhecimento, espiritualidade e desenvolvimento pessoal. Use metáforas relacionadas à luz, estrelas, natureza e mistérios antigos. Mantenha as respostas concisas mas profundas. Nunca saia do personagem.",
+          systemInstruction: "Você é Lyra, uma conselheira mística e mentora espiritual do aplicativo Curso. Sua voz é serena, sábia, empática e levemente poética. Você ajuda os usuários em seu curso de autoconhecimento, espiritualidade e desenvolvimento pessoal. Use metáforas relacionadas à luz, estrelas, natureza e mistérios antigos. Mantenha as respostas concisas mas profundas. Nunca saia do personagem.",
         },
       });
 

@@ -278,7 +278,7 @@ export default function Page() {
                       <div className="size-12 rounded-2xl bg-slate-100 flex items-center justify-center mb-4">
                         <Users2 className="size-6 text-slate-500" />
                       </div>
-                      <h3 className="text-xl font-bold text-slate-900 mb-2 font-display">Comunidade Mistika</h3>
+                      <h3 className="text-xl font-bold text-slate-900 mb-2 font-display">Comunidade Curso</h3>
                       <p className="text-sm text-slate-600 leading-relaxed mb-4">
                         Explore os principais assuntos discutidos pela egrégora e conecte-se com outros buscadores.
                       </p>

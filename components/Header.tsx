@@ -17,7 +17,7 @@ export default function Header() {
         <div className="relative h-10 w-32">
           <Image 
             src="https://curtai.online/logoCurtai.png" 
-            alt="Mistika Logo" 
+            alt="Curso Logo" 
             fill 
             className="object-contain"
             priority

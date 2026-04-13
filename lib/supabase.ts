@@ -13,7 +13,7 @@ export const supabase = createClient(
       persistSession: true,
       autoRefreshToken: true,
       detectSessionInUrl: true,
-      storageKey: 'mistika-auth-token',
+      storageKey: 'curso-auth-token',
     }
   }
 );
