@@ -31,10 +31,10 @@ export default function BottomNav() {
 
   const navItems = [
     { icon: Home, label: 'Início', href: '/' },
-    { icon: Sparkles, label: 'Curso', href: '/curso' },
+    { icon: Sparkles, label: 'Curso', href: '/jornada' },
     { icon: Share2, label: 'Mapa', href: '/mapa' },
     { icon: Users, label: 'Comunidade', href: '/comunidade' },
-    ...(isAdmin ? [{ icon: ShieldCheck, label: 'Admin', href: '/perfil' }] : []),
+    ...(isAdmin ? [{ icon: ShieldCheck, label: 'Admin', href: '/admin' }] : []),
     { icon: User, label: 'Perfil', href: '/perfil' },
   ];
 

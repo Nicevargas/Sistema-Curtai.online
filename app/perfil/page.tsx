@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import Image from 'next/image';
 import { getDirectDriveLink } from '@/lib/utils';
+import Link from 'next/link';
 
 interface UserProfile {
   id: string;
@@ -20,6 +21,7 @@ interface UserProfile {
   streak: number;
   bio?: string;
   created_at?: string;
+  journey_id?: string;
 }
 
 export default function PerfilPage() {
@@ -32,6 +34,9 @@ export default function PerfilPage() {
   const [editName, setEditName] = useState('');
   const [editBio, setEditBio] = useState('');
   const [editAvatar, setEditAvatar] = useState('');
+  const [editJourneyId, setEditJourneyId] = useState('');
+  const [journeyTitle, setJourneyTitle] = useState<string | null>(null);
+  const [availableJourneys, setAvailableJourneys] = useState<{ id: string, title: string }[]>([]);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
 
@@ -55,6 +60,28 @@ export default function PerfilPage() {
             setEditName(profileData.name || '');
             setEditBio(profileData.bio || '');
             setEditAvatar(profileData.avatar_url || '');
+            setEditJourneyId(profileData.journey_id || 'fa512a52-9742-410f-a71b-0bd4013bec8d');
+
+            // Fetch journey title
+            const journeyId = profileData.journey_id || 'fa512a52-9742-410f-a71b-0bd4013bec8d';
+            const { data: journeyData } = await supabase
+              .from('journeys')
+              .select('title')
+              .eq('id', journeyId)
+              .single();
+            
+            if (journeyData) {
+              setJourneyTitle(journeyData.title);
+            }
+
+            // Fetch all available journeys for selection
+            const { data: allJourneys } = await supabase
+              .from('journeys')
+              .select('id, title');
+            
+            if (allJourneys) {
+              setAvailableJourneys(allJourneys);
+            }
 
             // Fetch achievements count and titles
             const { data: progressData, error: progressError } = await supabase
@@ -126,7 +153,8 @@ export default function PerfilPage() {
           name: editName,
           bio: editBio,
           avatar_url: editAvatar,
-                  })
+          journey_id: editJourneyId
+        })
         .eq('id', profile.id);
 
       if (error) throw error;
@@ -136,7 +164,14 @@ export default function PerfilPage() {
         name: editName,
         bio: editBio,
         avatar_url: editAvatar,
+        journey_id: editJourneyId
       });
+
+      // Update journey title locally
+      const selectedJourney = availableJourneys.find(j => j.id === editJourneyId);
+      if (selectedJourney) {
+        setJourneyTitle(selectedJourney.title);
+      }
       
       setIsEditing(false);
       setMessage({ type: 'success', text: 'Perfil atualizado com sucesso!' });
@@ -219,7 +254,7 @@ export default function PerfilPage() {
               <div className="space-y-4">
                 <div>
                   <h1 className="text-3xl font-bold text-slate-900 font-display mb-2">
-                    {profile?.name || 'Buscador'}
+                    {profile?.name || 'Buscador Mistika'}
                   </h1>
                   {profile?.bio && (
                     <p className="text-base text-slate-600 italic leading-relaxed max-w-sm">
@@ -245,6 +280,14 @@ export default function PerfilPage() {
                     </div>
                   )}
                   
+                  {journeyTitle && (
+                    <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/20 border border-emerald-500/30">
+                      <TrendingUp className="size-3 text-emerald-400" />
+                      <p className="text-[10px] text-emerald-400 font-bold uppercase tracking-widest">
+                        Curso: {journeyTitle}
+                      </p>
+                    </div>
+                  )}
                 </div>
 
                 {profile?.created_at && (
@@ -266,12 +309,12 @@ export default function PerfilPage() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">Bio</label>
+                  <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">Mantra / Bio</label>
                   <textarea 
                     value={editBio}
                     onChange={(e) => setEditBio(e.target.value)}
                     className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-slate-800 focus:outline-none focus:border-primary/50 min-h-[80px]"
-                    placeholder="Fale sobre você..."
+                    placeholder="Seu mantra pessoal..."
                   />
                 </div>
                 <div className="space-y-2">
@@ -284,7 +327,18 @@ export default function PerfilPage() {
                     placeholder="Link da imagem"
                   />
                 </div>
-                
+                <div className="space-y-2">
+                  <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">Seu Curso</label>
+                  <select 
+                    value={editJourneyId}
+                    onChange={(e) => setEditJourneyId(e.target.value)}
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-slate-800 focus:outline-none focus:border-primary/50"
+                  >
+                    {availableJourneys.map(j => (
+                      <option key={j.id} value={j.id} className="bg-white">{j.title}</option>
+                    ))}
+                  </select>
+                </div>
                 <div className="flex gap-2 pt-2">
                   <button 
                     type="button"
@@ -309,19 +363,19 @@ export default function PerfilPage() {
           <div className="lg:col-span-7 space-y-8">
             {!isEditing && (
               <>
-                {profile?.role === 'admin' && (
+                {(profile?.role === 'admin' || profile?.role === 'admin master' || profile?.role === 'admim master') && (
                   <div className="p-6 rounded-3xl bg-red-500/5 border border-red-500/10">
                     <h2 className="text-xs font-bold text-red-400 uppercase tracking-widest mb-4 flex items-center gap-2">
                       <Settings className="size-4" />
                       Painel Administrativo
                     </h2>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <Link href="/admin" className="text-left p-4 rounded-2xl bg-slate-50 hover:bg-slate-100 transition-colors text-sm text-slate-800 flex items-center justify-between group">
+                        <span>Gerenciar Vídeos</span>
+                        <ArrowRight className="size-4 text-slate-400 group-hover:translate-x-1 transition-transform" />
+                      </Link>
                       <button className="text-left p-4 rounded-2xl bg-slate-50 hover:bg-slate-100 transition-colors text-sm text-slate-800 flex items-center justify-between group">
                         <span>Gerenciar Membros</span>
-                        <ArrowRight className="size-4 text-slate-400 group-hover:translate-x-1 transition-transform" />
-                      </button>
-                      <button className="text-left p-4 rounded-2xl bg-slate-50 hover:bg-slate-100 transition-colors text-sm text-slate-800 flex items-center justify-between group">
-                        <span>Publicar Conteúdo</span>
                         <ArrowRight className="size-4 text-slate-400 group-hover:translate-x-1 transition-transform" />
                       </button>
                     </div>

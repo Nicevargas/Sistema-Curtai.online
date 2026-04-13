@@ -25,7 +25,7 @@ export default function RealChallenge() {
         <div className="flex justify-between items-center">
           <div className="flex flex-col">
             <span className="text-[10px] text-slate-500 uppercase tracking-widest mb-1">Recompensa</span>
-            <span className="text-xs text-accent-gold font-bold">+50 Pontos</span>
+            <span className="text-xs text-accent-gold font-bold">+50 Mistika Points</span>
           </div>
           {/* Concluir button removed per user request */}
         </div>

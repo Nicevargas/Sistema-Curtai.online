@@ -33,7 +33,7 @@ export default function EvolutionDiary() {
       setTimeout(() => setSaved(false), 3000);
     } catch (err) {
       console.error('Erro ao salvar reflexão:', err);
-      alert('Erro ao salvar sua evolução. Tente novamente.');
+      alert('Erro ao salvar sua reflexão. Tente novamente.');
     } finally {
       setSaving(false);
     }
@@ -52,7 +52,7 @@ export default function EvolutionDiary() {
           onChange={(e) => setReflection(e.target.value)}
           disabled={saving}
           className="w-full min-h-[140px] lg:min-h-[200px] bg-slate-50 border border-slate-200 rounded-2xl p-4 text-sm text-slate-800 focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition-all placeholder:text-slate-400 resize-none disabled:opacity-50" 
-          placeholder="O que você aprendeu hoje? O que você descobriu ao longo do curso?"
+          placeholder="Como você se sentiu hoje ao assumir sua nova identidade?"
         />
         
         <AnimatePresence>
@@ -85,7 +85,7 @@ export default function EvolutionDiary() {
             Salvando...
           </>
         ) : (
-          'Salvar Evolução'
+          'Salvar Reflexão'
         )}
       </motion.button>
     </section>

@@ -80,15 +80,24 @@ export default function CursoPage() {
 
         const archetype = journeyData?.archetype || 'Curso';
 
-        // Fetch Challenges from content table where archetype matches journey's archetype
-        const { data: challengesData, error: challengesError } = await supabase
-          .from('content')
-          .select('id, title, thumbnail_url, description, media_url, url, created_at')
-          .eq('archetype', archetype)
-          .order('created_at', { ascending: true });
+        // Fetch Lessons from lessons table where journey_id matches user's journey
+        const { data: lessonsData, error: lessonsError } = await supabase
+          .from('lessons')
+          .select('id, titulo, capa_url, descricao, video_url, pdf_url, created_at, dia')
+          .eq('journey_id', journeyId)
+          .order('dia', { ascending: true });
 
-        if (isMounted && challengesData && !challengesError) {
-          setChallenges(challengesData);
+        if (isMounted && lessonsData && !lessonsError) {
+          const mappedLessons: Challenge[] = lessonsData.map(l => ({
+            id: l.id,
+            title: l.titulo,
+            thumbnail_url: l.capa_url,
+            description: l.descricao,
+            media_url: l.video_url,
+            url: l.pdf_url,
+            created_at: l.created_at
+          }));
+          setChallenges(mappedLessons);
           
           // Set initial selected challenge to the first uncompleted one
           const { data: progress } = await supabase
@@ -98,7 +107,7 @@ export default function CursoPage() {
             .eq('completed', true);
           
           const completedIds = new Set(progress?.map(p => p.lesson_id) || []);
-          const firstUncompleted = challengesData.find(c => !completedIds.has(c.id)) || challengesData[0];
+          const firstUncompleted = mappedLessons.find(c => !completedIds.has(c.id)) || mappedLessons[0];
           if (firstUncompleted) {
             setSelectedChallengeId(firstUncompleted.id);
           }

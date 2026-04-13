@@ -12,6 +12,16 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { getDirectDriveLink, getEmbedVideoUrl } from '@/lib/utils';
 
+interface JourneyItem {
+  id: string;
+  title: string;
+  archetype: string;
+  image_url: string | null;
+  duration: string;
+  steps: number;
+  user_id?: string;
+}
+
 interface LessonData {
   id: string;
   titulo: string;
@@ -25,6 +35,7 @@ interface LessonData {
 }
 
 export default function Page() {
+  const [featuredJourneys, setFeaturedJourneys] = useState<JourneyItem[]>([]);
   const [featuredLesson, setFeaturedLesson] = useState<LessonData | null>(null);
   const [loading, setLoading] = useState(true);
   const [lessonLoading, setLessonLoading] = useState(true);
@@ -46,9 +57,11 @@ export default function Page() {
         // Fetch user profile
         const { data: profile } = await supabase
           .from('profiles')
-          .select('role, level')
+          .select('role, level, journey_id')
           .eq('id', user.id)
           .maybeSingle();
+
+        const journeyId = profile?.journey_id || 'fa512a52-9742-410f-a71b-0bd4013bec8d';
 
         // Fetch user progress
         const { data: progressData } = await supabase
@@ -103,16 +116,17 @@ export default function Page() {
         if (completedIds.size === 0 && welcomeData) {
           setFeaturedLesson(welcomeData);
         } else {
-          // Fetch all lessons in the course to find the next one
+          // Fetch all lessons for the user's journey to find the next one
           const { data: allLessons } = await supabase
             .from('lessons')
             .select('*')
+            .eq('journey_id', journeyId)
             .order('dia', { ascending: true })
             .order('created_at', { ascending: true });
 
           let nextLesson = allLessons?.find(l => !completedIds.has(l.id));
 
-          // If no lessons found, try all lessons as fallback
+          // If no lessons found for this journey, try all lessons as fallback
           if (!nextLesson && (!allLessons || allLessons.length === 0)) {
             const { data: fallbackLessons } = await supabase
               .from('lessons')
@@ -133,6 +147,15 @@ export default function Page() {
         }
         setLessonLoading(false);
 
+        // Fetch Recommended Journeys
+        const { data: journeysData } = await supabase
+          .from('journeys')
+          .select('*')
+          .limit(6);
+
+        if (isMounted && journeysData) {
+          setFeaturedJourneys(journeysData);
+        }
       } catch (err) {
         console.error('Error fetching home data:', err);
       } finally {
@@ -166,31 +189,7 @@ export default function Page() {
             {/* Action Cards Section */}
             <section className="px-4 sm:px-0">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {/* Community Card */}
-                <Link href="/comunidade">
-                  <motion.div 
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    whileHover={{ y: -4 }}
-                    className="relative overflow-hidden rounded-3xl bg-slate-50 border border-slate-200 p-6 h-full group"
-                  >
-                    <div className="relative z-10">
-                      <div className="size-12 rounded-2xl bg-slate-100 flex items-center justify-center mb-4">
-                        <Users2 className="size-6 text-slate-500" />
-                      </div>
-                      <h3 className="text-xl font-bold text-slate-900 mb-2 font-display">Comunidade</h3>
-                      <p className="text-sm text-slate-600 leading-relaxed mb-4">
-                        Conecte-se com outros membros, participe de discussões e compartilhe experiências.
-                      </p>
-                      <div className="flex items-center gap-2 text-xs font-bold text-slate-500 uppercase tracking-widest">
-                        Ver Discussões
-                      </div>
-                    </div>
-                  </motion.div>
-                </Link>
-
-                {/* Consultant Card */}
+                {/* Counselor Lyra Card */}
                 <Link href="/lyra">
                   <motion.div 
                     initial={{ opacity: 0, y: 20 }}
@@ -204,13 +203,87 @@ export default function Page() {
                       <div className="size-12 rounded-2xl bg-primary/20 flex items-center justify-center mb-4">
                         <MessageSquare className="size-6 text-primary" />
                       </div>
-                      <h3 className="text-xl font-bold text-slate-900 mb-2 font-display">Consultor</h3>
+                      <h3 className="text-xl font-bold text-slate-900 mb-2 font-display">Conselheira Lyra</h3>
                       <p className="text-sm text-slate-600 leading-relaxed mb-4">
-                        Tire suas dúvidas com orientação personalizada e suporte para seu curso.
+                        Inicie uma conversa sagrada e receba orientações personalizadas para seu curso.
                       </p>
                       <div className="flex items-center gap-2 text-xs font-bold text-primary uppercase tracking-widest">
-                        Falar com Consultor
+                        Conversar Agora
                         <Sparkles className="size-3" />
+                      </div>
+                    </div>
+                  </motion.div>
+                </Link>
+
+                {/* Escrita Terapêutica Card */}
+                <Link href="/escrita">
+                  <motion.div 
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    whileHover={{ y: -4 }}
+                    className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-emerald-500/20 to-teal-500/20 border border-emerald-500/20 p-6 h-full group"
+                  >
+                    <div className="absolute top-0 right-0 -mt-4 -mr-4 size-32 bg-emerald-500/10 rounded-full blur-3xl group-hover:bg-emerald-500/20 transition-colors" />
+                    <div className="relative z-10">
+                      <div className="size-12 rounded-2xl bg-emerald-500/20 flex items-center justify-center mb-4">
+                        <PenTool className="size-6 text-emerald-500" />
+                      </div>
+                      <h3 className="text-xl font-bold text-slate-900 mb-2 font-display">Escrita Terapêutica</h3>
+                      <p className="text-sm text-slate-600 leading-relaxed mb-4">
+                        Liberte suas emoções e organize seus pensamentos através do poder da escrita guiada.
+                      </p>
+                      <div className="flex items-center gap-2 text-xs font-bold text-emerald-500 uppercase tracking-widest">
+                        Começar a Escrever
+                      </div>
+                    </div>
+                  </motion.div>
+                </Link>
+
+                {/* Planner Lei da Atração Card */}
+                <Link href="/planner">
+                  <motion.div 
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    whileHover={{ y: -4 }}
+                    className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-accent-gold/20 to-orange-500/20 border border-accent-gold/20 p-6 h-full group"
+                  >
+                    <div className="absolute top-0 right-0 -mt-4 -mr-4 size-32 bg-accent-gold/10 rounded-full blur-3xl group-hover:bg-accent-gold/20 transition-colors" />
+                    <div className="relative z-10">
+                      <div className="size-12 rounded-2xl bg-accent-gold/20 flex items-center justify-center mb-4">
+                        <Target className="size-6 text-accent-gold" />
+                      </div>
+                      <h3 className="text-xl font-bold text-slate-900 mb-2 font-display">Planner Lei da Atração</h3>
+                      <p className="text-sm text-slate-600 leading-relaxed mb-4">
+                        Manifeste seus desejos e planeje sua realidade com as leis universais.
+                      </p>
+                      <div className="flex items-center gap-2 text-xs font-bold text-accent-gold uppercase tracking-widest">
+                        Manifestar Agora
+                      </div>
+                    </div>
+                  </motion.div>
+                </Link>
+
+                {/* Community Card */}
+                <Link href="/comunidade">
+                  <motion.div 
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    whileHover={{ y: -4 }}
+                    className="relative overflow-hidden rounded-3xl bg-slate-50 border border-slate-200 p-6 h-full group"
+                  >
+                    <div className="relative z-10">
+                      <div className="size-12 rounded-2xl bg-slate-100 flex items-center justify-center mb-4">
+                        <Users2 className="size-6 text-slate-500" />
+                      </div>
+                      <h3 className="text-xl font-bold text-slate-900 mb-2 font-display">Comunidade Mistika</h3>
+                      <p className="text-sm text-slate-600 leading-relaxed mb-4">
+                        Explore os principais assuntos discutidos pela egrégora e conecte-se com outros buscadores.
+                      </p>
+                      <div className="flex items-center gap-2 text-xs font-bold text-slate-500 uppercase tracking-widest">
+                        Ver Discussões
                       </div>
                     </div>
                   </motion.div>

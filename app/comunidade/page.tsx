@@ -220,8 +220,9 @@ export default function ComunidadePage() {
       <div className="max-w-5xl mx-auto px-4 py-8">
         <div className="flex items-center gap-3 mb-8">
           <Users className="size-6 text-primary" />
-          <h1 className="text-2xl font-bold text-slate-900 font-display">Comunidade</h1>
+          <h1 className="text-2xl font-bold text-slate-900 font-display">Comunidade Mistika</h1>
         </div>
+
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           {/* Feed Column */}
           <div className="lg:col-span-8 space-y-10">

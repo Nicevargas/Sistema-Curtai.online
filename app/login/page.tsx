@@ -83,7 +83,7 @@ export default function LoginPage() {
             <div className="relative size-56">
               <Image 
                 src="https://curtai.online/logoCurtai.png" 
-                alt="Curtai Logo" 
+                alt="Mistika Logo" 
                 fill 
                 className="object-contain"
                 priority
