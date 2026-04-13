@@ -5,8 +5,11 @@
 export function getDirectDriveLink(url: string | null | undefined): string {
   if (!url) return '';
   
+  // Se já for um link direto do googleusercontent, retorna ele
+  if (url.includes('googleusercontent.com')) return url;
+
   // Se não for um link do Google Drive, retorna a URL original
-  if (!url.includes('drive.google.com')) return url;
+  if (!url.includes('drive.google.com') && !url.includes('docs.google.com')) return url;
 
   try {
     // Tenta extrair o ID do arquivo de diferentes formatos de link do Drive
@@ -29,8 +32,8 @@ export function getDirectDriveLink(url: string | null | undefined): string {
     }
 
     if (fileId) {
-      // Retorna o link de visualização direta mais confiável para o Next.js Image
-      return `https://lh3.googleusercontent.com/d/${fileId}`;
+      // Usando o formato uc?id que é o mais compatível universalmente
+      return `https://drive.google.com/uc?export=view&id=${fileId}`;
     }
   } catch (e) {
     console.error('Erro ao converter link do Google Drive:', e);

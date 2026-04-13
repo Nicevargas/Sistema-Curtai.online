@@ -193,6 +193,7 @@ export default function JourneyDetailPage({ params }: { params: Promise<{ id: st
           fill
           className="object-cover opacity-40"
           referrerPolicy="no-referrer"
+          unoptimized
         />
         <div className="absolute inset-0 bg-gradient-to-t from-white via-white/60 to-transparent" />
         
@@ -265,6 +266,7 @@ export default function JourneyDetailPage({ params }: { params: Promise<{ id: st
                       fill
                       className="object-cover opacity-80 group-hover:opacity-100 transition-opacity"
                       referrerPolicy="no-referrer"
+                      unoptimized
                     />
                     <div className="absolute inset-0 flex items-center justify-center">
                       <div className={`size-8 rounded-full flex items-center justify-center shadow-lg ${

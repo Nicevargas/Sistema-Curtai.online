@@ -200,6 +200,7 @@ export default function AdminJourneys() {
                       fill
                       className="object-cover"
                       referrerPolicy="no-referrer"
+                      unoptimized
                     />
                     <div className="absolute top-3 left-3 px-3 py-1 rounded-full bg-white/90 backdrop-blur-sm text-[10px] font-bold text-primary uppercase tracking-widest">
                       {journey.archetype}

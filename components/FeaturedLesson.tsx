@@ -171,6 +171,7 @@ export default function FeaturedLesson({ lesson, loading }: FeaturedLessonProps)
                   fill
                   className="object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-500"
                   referrerPolicy="no-referrer"
+                  unoptimized
                 />
                 
                 {/* Play Button */}

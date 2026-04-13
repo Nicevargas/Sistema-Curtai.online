@@ -273,6 +273,7 @@ export default function CursoPage() {
                             fill
                             className="object-cover opacity-60 group-hover:scale-105 transition-transform duration-500"
                             referrerPolicy="no-referrer"
+                            unoptimized
                           />
                           <div className="absolute inset-0 bg-gradient-to-t from-background-dark via-transparent to-transparent" />
                           
@@ -360,6 +361,7 @@ export default function CursoPage() {
                                 fill
                                 className="object-cover opacity-60 group-hover:scale-105 transition-transform duration-500"
                                 referrerPolicy="no-referrer"
+                                unoptimized
                               />
                               <div className="absolute inset-0 bg-gradient-to-t from-background-dark via-transparent to-transparent" />
                               
