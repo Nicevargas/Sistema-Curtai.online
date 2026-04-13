@@ -232,7 +232,7 @@ export default function ComunidadePage() {
                 <textarea
                   value={newPost}
                   onChange={(e) => setNewPost(e.target.value)}
-                  placeholder="Deixe sua mensagem para a egrégora..."
+                  placeholder="Compartilhe um insight ou tire uma dúvida com a comunidade de alunos..."
                   className="w-full bg-white border border-slate-200 rounded-2xl p-4 pr-12 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-primary/50 transition-colors resize-none h-24"
                 />
                 <button 
@@ -308,7 +308,7 @@ export default function ComunidadePage() {
             <div className="sticky top-24 space-y-6">
               <div className="flex items-center gap-2 mb-4">
                 <Star className="size-4 text-primary" />
-                <h2 className="text-xs font-bold text-slate-500 uppercase tracking-widest">Membros da Egrégora</h2>
+                <h2 className="text-xs font-bold text-slate-500 uppercase tracking-widest">Alunos do Curso</h2>
               </div>
 
               {members.length === 0 ? (

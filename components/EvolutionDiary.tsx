@@ -52,7 +52,7 @@ export default function EvolutionDiary() {
           onChange={(e) => setReflection(e.target.value)}
           disabled={saving}
           className="w-full min-h-[140px] lg:min-h-[200px] bg-slate-50 border border-slate-200 rounded-2xl p-4 text-sm text-slate-800 focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition-all placeholder:text-slate-400 resize-none disabled:opacity-50" 
-          placeholder="Como você se sentiu hoje ao assumir sua nova identidade?"
+          placeholder="Registre aqui suas anotações e insights sobre as aulas de hoje..."
         />
         
         <AnimatePresence>
@@ -65,7 +65,7 @@ export default function EvolutionDiary() {
             >
               <div className="flex flex-col items-center gap-2 text-primary">
                 <CheckCircle2 className="size-12" />
-                <span className="font-bold text-sm uppercase tracking-widest">Reflexão Salva!</span>
+                <span className="font-bold text-sm uppercase tracking-widest">Anotação Salva!</span>
               </div>
             </motion.div>
           )}
@@ -85,7 +85,7 @@ export default function EvolutionDiary() {
             Salvando...
           </>
         ) : (
-          'Salvar Reflexão'
+          'Salvar Anotação'
         )}
       </motion.button>
     </section>
