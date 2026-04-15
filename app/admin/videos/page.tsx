@@ -10,6 +10,7 @@ import { Plus, Video, Trash2, Edit2, Search, Filter, Play, ExternalLink, CheckCi
 import Image from 'next/image';
 import Link from 'next/link';
 import { getDirectDriveLink } from '@/lib/utils';
+import { uploadImage } from '@/lib/storage';
 
 interface Lesson {
   id: string;
@@ -35,6 +36,8 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
   const [showAddModal, setShowAddModal] = useState(false);
   const [editingLesson, setEditingLesson] = useState<Lesson | null>(null);
+  const [uploading, setUploading] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
 
   // Form State
@@ -78,23 +81,38 @@ export default function AdminDashboard() {
     setMessage(null);
 
     try {
+      let finalCapaUrl = formData.capa_url;
+
+      // Se houver um arquivo selecionado, faz o upload primeiro
+      if (selectedFile) {
+        setUploading(true);
+        const { url, error: uploadError } = await uploadImage(selectedFile, 'capa', 'lessons');
+        setUploading(false);
+        
+        if (uploadError) throw uploadError;
+        if (url) finalCapaUrl = url;
+      }
+
+      const dataToSave = { ...formData, capa_url: finalCapaUrl };
+
       if (editingLesson) {
         const { error } = await supabase
           .from('lessons')
-          .update(formData)
+          .update(dataToSave)
           .eq('id', editingLesson.id);
         if (error) throw error;
         setMessage({ type: 'success', text: 'Aula atualizada com sucesso!' });
       } else {
         const { error } = await supabase
           .from('lessons')
-          .insert([formData]);
+          .insert([dataToSave]);
         if (error) throw error;
         setMessage({ type: 'success', text: 'Aula adicionada com sucesso!' });
       }
 
       setShowAddModal(false);
       setEditingLesson(null);
+      setSelectedFile(null);
       setFormData({
         journey_id: journeys[0]?.id || '',
         titulo: '',
@@ -111,6 +129,7 @@ export default function AdminDashboard() {
       setMessage({ type: 'error', text: 'Erro ao salvar aula: ' + err.message });
     } finally {
       setLoading(false);
+      setUploading(false);
     }
   };
 
@@ -335,15 +354,43 @@ export default function AdminDashboard() {
                         placeholder="Link do vídeo"
                       />
                     </div>
-                    <div className="space-y-2">
-                      <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">URL da Capa (Thumbnail)</label>
+                    <div className="space-y-2 md:col-span-2">
+                      <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">Imagem de Capa (Upload)</label>
+                      <div className="flex items-center gap-4">
+                        <div className="relative size-24 rounded-2xl bg-slate-100 overflow-hidden border border-slate-200 shrink-0">
+                          {(selectedFile || formData.capa_url) ? (
+                            <Image 
+                              src={selectedFile ? URL.createObjectURL(selectedFile) : getDirectDriveLink(formData.capa_url)}
+                              alt="Preview"
+                              fill
+                              className="object-cover"
+                              unoptimized
+                            />
+                          ) : (
+                            <div className="absolute inset-0 flex items-center justify-center text-slate-400">
+                              <Plus className="size-6" />
+                            </div>
+                          )}
+                        </div>
+                        <div className="flex-1 space-y-2">
+                          <input 
+                            type="file"
+                            accept="image/*"
+                            onChange={(e) => setSelectedFile(e.target.files?.[0] || null)}
+                            className="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20"
+                          />
+                          <p className="text-[10px] text-slate-400 italic">Recomendado: 1280x720px (16:9)</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="space-y-2 md:col-span-2">
+                      <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">Ou URL da Capa (Drive/Link Externo)</label>
                       <input 
-                        required
                         type="text"
                         value={formData.capa_url}
                         onChange={(e) => setFormData({...formData, capa_url: e.target.value})}
                         className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-slate-800 focus:outline-none focus:border-primary/50"
-                        placeholder="Link da imagem"
+                        placeholder="Link da imagem (opcional se fizer upload)"
                       />
                     </div>
                     <div className="space-y-2">
@@ -390,10 +437,10 @@ export default function AdminDashboard() {
                     </button>
                     <button 
                       type="submit"
-                      disabled={loading}
+                      disabled={loading || uploading}
                       className="flex-1 py-4 rounded-2xl bg-primary text-white font-bold text-sm hover:bg-primary/90 transition-colors disabled:opacity-50 shadow-lg shadow-primary/20"
                     >
-                      {loading ? 'Salvando...' : editingLesson ? 'Atualizar Aula' : 'Publicar Aula'}
+                      {uploading ? 'Enviando Imagem...' : loading ? 'Salvando...' : editingLesson ? 'Atualizar Aula' : 'Publicar Aula'}
                     </button>
                   </div>
                 </form>
