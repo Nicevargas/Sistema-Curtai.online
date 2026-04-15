@@ -19,6 +19,7 @@ interface JourneyItem {
   image_url: string | null;
   duration: string;
   steps: number;
+  is_active?: boolean;
   user_id?: string;
 }
 
@@ -151,6 +152,7 @@ export default function Page() {
         const { data: journeysData } = await supabase
           .from('journeys')
           .select('*')
+          .order('is_active', { ascending: false })
           .limit(6);
 
         if (isMounted && journeysData) {
@@ -238,6 +240,58 @@ export default function Page() {
                     </div>
                   </motion.div>
                 </Link>
+              </div>
+            </section>
+
+            {/* Recommended Journeys Section */}
+            <section className="px-4 sm:px-0">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-xs font-bold text-slate-500 uppercase tracking-widest">Cursos Recomendados</h2>
+                <Link href="/jornada" className="text-[10px] font-bold text-primary uppercase tracking-widest hover:underline">Ver Todos</Link>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                {featuredJourneys.map((journey) => (
+                  <Link key={journey.id} href={`/jornada/${journey.id}`}>
+                    <motion.div 
+                      whileHover={{ y: -4 }}
+                      className="bg-white border border-slate-200 rounded-3xl overflow-hidden group hover:shadow-xl transition-all h-full"
+                    >
+                      <div className="relative h-40 bg-slate-100">
+                        <Image 
+                          src={getDirectDriveLink(journey.image_url) || `https://picsum.photos/seed/${journey.id}/800/400`} 
+                          alt={journey.title}
+                          fill
+                          className="object-cover"
+                          referrerPolicy="no-referrer"
+                          unoptimized
+                        />
+                        <div className="absolute top-3 left-3 flex gap-2">
+                          <div className="px-3 py-1 rounded-full bg-white/90 backdrop-blur-sm text-[10px] font-bold text-primary uppercase tracking-widest">
+                            {journey.archetype}
+                          </div>
+                          {journey.is_active === false && (
+                            <div className="px-3 py-1 rounded-full bg-red-500 text-white text-[10px] font-bold uppercase tracking-widest">
+                              Em Breve
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                      <div className="p-5">
+                        <h3 className="font-bold text-slate-900 mb-2 line-clamp-1">{journey.title}</h3>
+                        <div className="flex items-center gap-4 text-slate-500">
+                          <div className="flex items-center gap-1">
+                            <Clock className="size-3" />
+                            <span className="text-[10px] font-medium">{journey.duration}</span>
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <BookOpen className="size-3" />
+                            <span className="text-[10px] font-medium">{journey.steps} aulas</span>
+                          </div>
+                        </div>
+                      </div>
+                    </motion.div>
+                  </Link>
+                ))}
               </div>
             </section>
           </div>
