@@ -20,6 +20,7 @@ interface Journey {
   participants: number;
   archetype: string;
   image_url: string | null;
+  is_active: boolean;
   created_at: string;
 }
 
@@ -39,7 +40,8 @@ export default function AdminJourneys() {
     duration: '',
     participants: 0,
     archetype: 'Curso',
-    image_url: ''
+    image_url: '',
+    is_active: true
   });
 
   const fetchData = useCallback(async () => {
@@ -107,7 +109,8 @@ export default function AdminJourneys() {
         duration: '',
         participants: 0,
         archetype: 'Curso',
-        image_url: ''
+        image_url: '',
+        is_active: true
       });
       fetchData();
     } catch (err: any) {
@@ -141,7 +144,8 @@ export default function AdminJourneys() {
       duration: journey.duration,
       participants: journey.participants,
       archetype: journey.archetype,
-      image_url: journey.image_url || ''
+      image_url: journey.image_url || '',
+      is_active: journey.is_active ?? true
     });
     setShowAddModal(true);
   };
@@ -171,7 +175,8 @@ export default function AdminJourneys() {
                   duration: '',
                   participants: 0,
                   archetype: 'Curso',
-                  image_url: ''
+                  image_url: '',
+                  is_active: true
                 });
                 setShowAddModal(true);
               }}
@@ -221,8 +226,15 @@ export default function AdminJourneys() {
                       referrerPolicy="no-referrer"
                       unoptimized
                     />
-                    <div className="absolute top-3 left-3 px-3 py-1 rounded-full bg-white/90 backdrop-blur-sm text-[10px] font-bold text-primary uppercase tracking-widest">
-                      {journey.archetype}
+                    <div className="absolute top-3 left-3 flex gap-2">
+                      <div className="px-3 py-1 rounded-full bg-white/90 backdrop-blur-sm text-[10px] font-bold text-primary uppercase tracking-widest">
+                        {journey.archetype}
+                      </div>
+                      {!journey.is_active && (
+                        <div className="px-3 py-1 rounded-full bg-red-500 text-white text-[10px] font-bold uppercase tracking-widest">
+                          Em Breve
+                        </div>
+                      )}
                     </div>
                   </div>
                   <div className="p-6">
@@ -345,6 +357,29 @@ export default function AdminJourneys() {
                         onChange={(e) => setFormData({...formData, participants: parseInt(e.target.value)})}
                         className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-slate-800 focus:outline-none focus:border-primary/50"
                       />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">Status do Curso</label>
+                      <div className="flex items-center gap-4 p-3 bg-slate-50 border border-slate-200 rounded-xl">
+                        <label className="flex items-center gap-2 cursor-pointer">
+                          <input 
+                            type="radio"
+                            checked={formData.is_active === true}
+                            onChange={() => setFormData({...formData, is_active: true})}
+                            className="accent-primary"
+                          />
+                          <span className="text-sm font-medium text-slate-700">Ativo</span>
+                        </label>
+                        <label className="flex items-center gap-2 cursor-pointer">
+                          <input 
+                            type="radio"
+                            checked={formData.is_active === false}
+                            onChange={() => setFormData({...formData, is_active: false})}
+                            className="accent-primary"
+                          />
+                          <span className="text-sm font-medium text-slate-700">Em Breve</span>
+                        </label>
+                      </div>
                     </div>
                     <div className="space-y-2 md:col-span-2">
                       <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">Imagem de Capa (Upload)</label>

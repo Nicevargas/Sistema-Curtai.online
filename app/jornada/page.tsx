@@ -22,6 +22,7 @@ interface Journey {
   participants: number;
   archetype: string;
   image_url: string | null;
+  is_active: boolean;
 }
 
 interface Challenge {
@@ -48,6 +49,7 @@ export default function CursoPage() {
   const [loading, setLoading] = useState(true);
   const [activeVideo, setActiveVideo] = useState<Challenge | null>(null);
   const [user, setUser] = useState<any>(null);
+  const [journey, setJourney] = useState<Journey | null>(null);
   const [selectedChallengeId, setSelectedChallengeId] = useState<string | null>(null);
 
   useEffect(() => {
@@ -74,9 +76,13 @@ export default function CursoPage() {
         // Fetch journey details to get archetype
         const { data: journeyData } = await supabase
           .from('journeys')
-          .select('archetype')
+          .select('*')
           .eq('id', journeyId)
           .single();
+
+        if (isMounted && journeyData) {
+          setJourney(journeyData);
+        }
 
         const archetype = journeyData?.archetype || 'Curso';
 
@@ -304,9 +310,15 @@ export default function CursoPage() {
 
                         <div className="p-8">
                           <div className="flex items-center gap-3 mb-3">
-                            <span className="px-3 py-1 rounded-full bg-primary/20 text-primary text-[10px] font-bold uppercase tracking-widest">
-                              Em Andamento
-                            </span>
+                            {journey?.is_active === false ? (
+                              <span className="px-3 py-1 rounded-full bg-red-500 text-white text-[10px] font-bold uppercase tracking-widest">
+                                Em Breve
+                              </span>
+                            ) : (
+                              <span className="px-3 py-1 rounded-full bg-primary/20 text-primary text-[10px] font-bold uppercase tracking-widest">
+                                Em Andamento
+                              </span>
+                            )}
                             {completedItems.has(currentChallenge.id) && (
                               <span className="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-500 text-[10px] font-bold uppercase tracking-widest">
                                 Concluído
@@ -315,7 +327,7 @@ export default function CursoPage() {
                           </div>
                           <h3 className="text-3xl font-bold text-slate-900 mb-3 font-display">{currentChallenge.title}</h3>
                           <p className="text-base text-slate-600 leading-relaxed">
-                            {currentChallenge.description}
+                            {journey?.is_active === false ? 'Este curso ainda não está disponível. Fique atento às novidades!' : currentChallenge.description}
                           </p>
                         </div>
                       </motion.div>
@@ -370,18 +382,18 @@ export default function CursoPage() {
                                   <button 
                                     onClick={(e) => {
                                       e.stopPropagation();
-                                      unlocked && setActiveVideo(challenge);
+                                      unlocked && journey?.is_active !== false && setActiveVideo(challenge);
                                     }}
-                                    disabled={!unlocked}
+                                    disabled={!unlocked || journey?.is_active === false}
                                     className={`size-14 rounded-full flex items-center justify-center shadow-2xl transform transition-transform ${
-                                      !unlocked 
+                                      !unlocked || journey?.is_active === false
                                         ? 'bg-slate-800 cursor-not-allowed' 
                                         : 'group-hover:scale-110 ' + (completedItems.has(challenge.id) ? 'bg-emerald-500' : 'bg-primary')
                                     }`}
                                   >
                                     {completedItems.has(challenge.id) ? (
                                       <CheckCircle2 className="size-6 text-white" />
-                                    ) : unlocked ? (
+                                    ) : unlocked && journey?.is_active !== false ? (
                                       <Play className="size-6 fill-current ml-1 text-white" />
                                     ) : (
                                       <Clock className="size-6 text-slate-500" />

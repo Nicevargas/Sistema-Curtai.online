@@ -19,6 +19,7 @@ interface Journey {
   participants: number;
   archetype: string;
   image_url: string | null;
+  is_active: boolean;
   user_id?: string;
 }
 
@@ -222,6 +223,18 @@ export default function JourneyDetailPage({ params }: { params: Promise<{ id: st
                 <span className="text-xs font-medium">{journey.steps} passos</span>
               </div>
             </div>
+
+            {!journey.is_active && (
+              <div className="mt-6 p-4 rounded-2xl bg-red-500/10 border border-red-500/20 text-red-600">
+                <div className="flex items-center gap-3">
+                  <Clock className="size-5" />
+                  <div>
+                    <p className="text-sm font-bold uppercase tracking-widest">Em Breve</p>
+                    <p className="text-xs opacity-80">Este curso ainda não está disponível para acesso.</p>
+                  </div>
+                </div>
+              </div>
+            )}
           </motion.div>
         </div>
       </div>
@@ -252,11 +265,13 @@ export default function JourneyDetailPage({ params }: { params: Promise<{ id: st
                 animate={{ x: 0, opacity: 1 }}
                 transition={{ delay: index * 0.05 }}
                 className={`group bg-slate-50 border rounded-2xl p-4 transition-all cursor-pointer ${
-                  completedLessons.has(lesson.id) 
-                    ? 'border-emerald-500/30 bg-emerald-50' 
-                    : 'border-slate-200 hover:border-primary/30'
+                  !journey.is_active 
+                    ? 'opacity-50 grayscale cursor-not-allowed border-slate-100'
+                    : completedLessons.has(lesson.id) 
+                      ? 'border-emerald-500/30 bg-emerald-50' 
+                      : 'border-slate-200 hover:border-primary/30'
                 }`}
-                onClick={() => lesson.video_url && setActiveVideo(lesson.video_url)}
+                onClick={() => journey.is_active && lesson.video_url && setActiveVideo(lesson.video_url)}
               >
                 <div className="flex gap-4">
                   <div className="relative size-20 shrink-0 rounded-xl overflow-hidden border border-slate-200">
