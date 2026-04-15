@@ -275,6 +275,7 @@ export default function ComunidadePage() {
                             fill
                             className="object-cover"
                             referrerPolicy="no-referrer"
+                            unoptimized
                           />
                         </div>
                         <div className="flex-1">
@@ -334,6 +335,7 @@ export default function ComunidadePage() {
                           fill 
                           className="object-cover"
                           referrerPolicy="no-referrer"
+                          unoptimized
                         />
                       </div>
                       

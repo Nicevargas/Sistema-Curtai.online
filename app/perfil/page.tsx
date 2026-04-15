@@ -238,6 +238,7 @@ export default function PerfilPage() {
                   fill 
                   className="object-cover"
                   referrerPolicy="no-referrer"
+                  unoptimized
                 />
               </motion.div>
               {!isEditing && (
