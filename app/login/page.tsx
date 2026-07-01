@@ -161,8 +161,14 @@ export default function LoginPage() {
             )}
           </button>
 
-          <div className="text-center mt-8">
-            <p className="text-slate-600 text-[10px] mt-4 px-6 italic">
+          <div className="text-center mt-6">
+            <p className="text-slate-500 text-sm">
+              Não tem uma conta?{' '}
+              <Link href="/cadastro" className="text-primary font-bold hover:underline">
+                Cadastre-se aqui
+              </Link>
+            </p>
+            <p className="text-slate-400 text-[10px] mt-4 px-6 italic">
               * O acesso é restrito a membros.
             </p>
           </div>
