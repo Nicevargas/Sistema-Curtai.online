@@ -2,12 +2,14 @@ import type {NextConfig} from 'next';
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
+  output: 'export',
   typescript: {
     ignoreBuildErrors: false,
   },
   turbopack: {},
   // Allow access to remote image placeholder.
   images: {
+    unoptimized: true,
     remotePatterns: [
       {
         protocol: 'https',

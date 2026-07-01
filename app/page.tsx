@@ -251,7 +251,7 @@ export default function Page() {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 {featuredJourneys.map((journey) => (
-                  <Link key={journey.id} href={`/jornada/${journey.id}`}>
+                  <Link key={journey.id} href={`/jornada-detalhe?id=${journey.id}`}>
                     <motion.div 
                       whileHover={{ y: -4 }}
                       className="bg-white border border-slate-200 rounded-3xl overflow-hidden group hover:shadow-xl transition-all h-full"

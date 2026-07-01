@@ -2,7 +2,8 @@
 
 import Header from '@/components/Header';
 import BottomNav from '@/components/BottomNav';
-import { useEffect, useState, use } from 'react';
+import { useEffect, useState, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { motion, AnimatePresence } from 'motion/react';
 import { Play, Clock, Users, BookOpen, ChevronRight, Sparkles, X, FileText, CheckCircle2 } from 'lucide-react';
@@ -34,13 +35,10 @@ interface Lesson {
   dia?: string | number;
 }
 
-interface Progress {
-  lesson_id: string;
-  completed: boolean;
-}
+function JourneyDetailPageContent() {
+  const searchParams = useSearchParams();
+  const id = searchParams.get('id') || 'fa512a52-9742-410f-a71b-0bd4013bec8d';
 
-export default function JourneyDetailPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = use(params);
   const [journey, setJourney] = useState<Journey | null>(null);
   const [lessons, setLessons] = useState<Lesson[]>([]);
   const [completedLessons, setCompletedLessons] = useState<Set<string>>(new Set());
@@ -313,7 +311,6 @@ export default function JourneyDetailPage({ params }: { params: Promise<{ id: st
                     <p className="text-[10px] text-slate-600 line-clamp-2 leading-relaxed mb-3">
                       {lesson.descricao}
                     </p>
-                    {/* Check-in button removed per user request */}
                   </div>
                   
                   <div className="flex flex-col items-center justify-center py-1">
@@ -384,5 +381,17 @@ export default function JourneyDetailPage({ params }: { params: Promise<{ id: st
         )}
       </AnimatePresence>
     </main>
+  );
+}
+
+export default function Page() {
+  return (
+    <Suspense fallback={
+      <main className="min-h-screen bg-white flex items-center justify-center">
+        <div className="size-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+      </main>
+    }>
+      <JourneyDetailPageContent />
+    </Suspense>
   );
 }
