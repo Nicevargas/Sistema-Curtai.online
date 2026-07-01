@@ -39,6 +39,10 @@ export default function AdminDashboard() {
   const [uploading, setUploading] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
+  
+  // Search and filter states
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedJourneyFilter, setSelectedJourneyFilter] = useState('todos');
 
   // Form State
   const [formData, setFormData] = useState({
@@ -61,15 +65,30 @@ export default function AdminDashboard() {
       if (journeysData) setJourneys(journeysData);
       if (lessonsData) setLessons(lessonsData);
       
-      if (journeysData && journeysData.length > 0 && !formData.journey_id) {
-        setFormData(prev => ({ ...prev, journey_id: journeysData[0].id }));
+      if (journeysData && journeysData.length > 0) {
+        let initialJourneyId = journeysData[0].id;
+        
+        // Verificar se há journey_id na url para pré-filtrar
+        if (typeof window !== 'undefined') {
+          const params = new URLSearchParams(window.location.search);
+          const jId = params.get('journey_id');
+          if (jId && journeysData.some(j => j.id === jId)) {
+            initialJourneyId = jId;
+            setSelectedJourneyFilter(jId);
+          }
+        }
+        
+        setFormData(prev => ({ 
+          ...prev, 
+          journey_id: prev.journey_id || initialJourneyId 
+        }));
       }
     } catch (err) {
       console.error('Error fetching admin data:', err);
     } finally {
       setLoading(false);
     }
-  }, [formData.journey_id]);
+  }, []);
 
   useEffect(() => {
     fetchData();
@@ -162,9 +181,16 @@ export default function AdminDashboard() {
     setShowAddModal(true);
   };
 
+  const filteredLessons = lessons.filter(lesson => {
+    const matchesSearch = lesson.titulo.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                          lesson.descricao.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesJourney = selectedJourneyFilter === 'todos' || lesson.journey_id === selectedJourneyFilter;
+    return matchesSearch && matchesJourney;
+  });
+
   return (
     <AdminGuard>
-      <main className="min-h-screen bg-white relative pb-24">
+      <main className="min-h-screen bg-white relative pb-24 text-slate-800">
         <Header />
         
         <div className="max-w-6xl mx-auto px-4 py-8">
@@ -175,14 +201,14 @@ export default function AdminDashboard() {
 
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
             <div>
-              <h1 className="text-3xl font-bold text-slate-900 font-display">Gerenciar Vídeos</h1>
-              <p className="text-slate-500 text-sm">Gerencie o conteúdo do curso online</p>
+              <h1 className="text-3xl font-bold text-slate-900 font-display">Gerenciar Aulas</h1>
+              <p className="text-slate-500 text-sm">Adicione e gerencie as aulas de cada curso</p>
             </div>
             <button 
               onClick={() => {
                 setEditingLesson(null);
                 setFormData({
-                  journey_id: journeys[0]?.id || '',
+                  journey_id: selectedJourneyFilter !== 'todos' ? selectedJourneyFilter : (journeys[0]?.id || ''),
                   titulo: '',
                   descricao: '',
                   video_url: '',
@@ -198,6 +224,34 @@ export default function AdminDashboard() {
               <Plus className="size-5" />
               Adicionar Nova Aula
             </button>
+          </div>
+
+          {/* Filtros e Busca */}
+          <div className="bg-slate-50 border border-slate-200 rounded-3xl p-6 mb-8 flex flex-col md:flex-row gap-4 items-center">
+            <div className="relative flex-1 w-full">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 size-5 text-slate-400" />
+              <input 
+                type="text" 
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="Buscar aula por título ou descrição..."
+                className="w-full bg-white border border-slate-200 rounded-2xl py-3 pl-12 pr-4 text-sm text-slate-800 focus:outline-none focus:border-primary/50 transition-colors shadow-sm"
+              />
+            </div>
+            
+            <div className="flex items-center gap-2 bg-white border border-slate-200 rounded-2xl px-4 py-2 w-full md:w-auto shrink-0 shadow-sm">
+              <Filter className="size-4 text-slate-400" />
+              <select 
+                value={selectedJourneyFilter}
+                onChange={(e) => setSelectedJourneyFilter(e.target.value)}
+                className="bg-transparent text-xs font-bold text-slate-600 focus:outline-none cursor-pointer max-w-[250px] py-1"
+              >
+                <option value="todos">Todos os Cursos</option>
+                {journeys.map(j => (
+                  <option key={j.id} value={j.id}>{j.title}</option>
+                ))}
+              </select>
+            </div>
           </div>
 
           {message && (
@@ -219,68 +273,79 @@ export default function AdminDashboard() {
               Array.from({ length: 6 }).map((_, i) => (
                 <div key={i} className="h-64 bg-slate-100 rounded-3xl animate-pulse" />
               ))
-            ) : lessons.length === 0 ? (
-              <div className="col-span-full py-20 text-center">
+            ) : filteredLessons.length === 0 ? (
+              <div className="col-span-full py-20 text-center bg-white border border-slate-100 rounded-3xl">
                 <Video className="size-16 text-slate-200 mx-auto mb-4" />
-                <p className="text-slate-500">Nenhuma aula cadastrada ainda.</p>
+                <p className="text-slate-500 font-medium">Nenhuma aula encontrada para esta busca.</p>
+                <p className="text-slate-400 text-xs mt-1">Experimente alterar os filtros ou cadastrar uma nova aula.</p>
               </div>
             ) : (
-              lessons.map((lesson) => (
-                <motion.div 
-                  key={lesson.id}
-                  layout
-                  className="bg-white border border-slate-200 rounded-3xl overflow-hidden group hover:shadow-xl transition-all"
-                >
-                  <div className="relative aspect-video bg-slate-100">
-                    <Image 
-                      src={getDirectDriveLink(lesson.capa_url) || 'https://picsum.photos/seed/course/800/450'} 
-                      alt={lesson.titulo}
-                      fill
-                      className="object-cover"
-                      referrerPolicy="no-referrer"
-                      unoptimized
-                    />
-                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                      <Play className="size-12 text-white fill-white" />
-                    </div>
-                    <div className="absolute top-3 left-3 px-3 py-1 rounded-full bg-white/90 backdrop-blur-sm text-[10px] font-bold text-primary uppercase tracking-widest">
-                      Dia {lesson.dia}
-                    </div>
-                  </div>
-                  <div className="p-6">
-                    <div className="flex items-start justify-between gap-2 mb-2">
-                      <h3 className="font-bold text-slate-900 line-clamp-1">{lesson.titulo}</h3>
-                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest shrink-0">{lesson.categoria}</span>
-                    </div>
-                    <p className="text-xs text-slate-500 line-clamp-2 mb-6">{lesson.descricao}</p>
-                    
-                    <div className="flex items-center justify-between pt-4 border-t border-slate-100">
-                      <div className="flex gap-2">
-                        <button 
-                          onClick={() => openEditModal(lesson)}
-                          className="p-2 rounded-xl bg-slate-50 text-slate-600 hover:bg-primary/10 hover:text-primary transition-colors"
-                        >
-                          <Edit2 className="size-4" />
-                        </button>
-                        <button 
-                          onClick={() => handleDelete(lesson.id)}
-                          className="p-2 rounded-xl bg-slate-50 text-slate-600 hover:bg-red-50 hover:text-red-500 transition-colors"
-                        >
-                          <Trash2 className="size-4" />
-                        </button>
+              filteredLessons.map((lesson) => {
+                const lessonJourney = journeys.find(j => j.id === lesson.journey_id);
+                return (
+                  <motion.div 
+                    key={lesson.id}
+                    layout
+                    className="bg-white border border-slate-200 rounded-3xl overflow-hidden group hover:shadow-xl transition-all"
+                  >
+                    <div className="relative aspect-video bg-slate-100">
+                      <Image 
+                        src={getDirectDriveLink(lesson.capa_url) || 'https://picsum.photos/seed/course/800/450'} 
+                        alt={lesson.titulo}
+                        fill
+                        className="object-cover"
+                        referrerPolicy="no-referrer"
+                        unoptimized
+                      />
+                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                        <Play className="size-12 text-white fill-white" />
                       </div>
-                      <a 
-                        href={lesson.video_url} 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className="p-2 rounded-xl bg-slate-50 text-slate-600 hover:bg-slate-100 transition-colors"
-                      >
-                        <ExternalLink className="size-4" />
-                      </a>
+                      <div className="absolute top-3 left-3 px-3 py-1 rounded-full bg-white/90 backdrop-blur-sm text-[10px] font-bold text-primary uppercase tracking-widest shadow-sm">
+                        Dia {lesson.dia}
+                      </div>
                     </div>
-                  </div>
-                </motion.div>
-              ))
+                    <div className="p-6">
+                      <div className="flex items-start justify-between gap-2 mb-2">
+                        <div className="min-w-0 flex-1">
+                          <h3 className="font-bold text-slate-900 line-clamp-1">{lesson.titulo}</h3>
+                          {lessonJourney && (
+                            <span className="text-[9px] font-bold text-primary bg-primary/5 px-2 py-0.5 rounded-md mt-1 inline-block truncate max-w-full">
+                              {lessonJourney.title}
+                            </span>
+                          )}
+                        </div>
+                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest shrink-0 mt-0.5">{lesson.categoria}</span>
+                      </div>
+                      <p className="text-xs text-slate-500 line-clamp-2 mb-6 mt-2">{lesson.descricao}</p>
+                      
+                      <div className="flex items-center justify-between pt-4 border-t border-slate-100">
+                        <div className="flex gap-2">
+                          <button 
+                            onClick={() => openEditModal(lesson)}
+                            className="p-2 rounded-xl bg-slate-50 text-slate-600 hover:bg-primary/10 hover:text-primary transition-colors"
+                          >
+                            <Edit2 className="size-4" />
+                          </button>
+                          <button 
+                            onClick={() => handleDelete(lesson.id)}
+                            className="p-2 rounded-xl bg-slate-50 text-slate-600 hover:bg-red-50 hover:text-red-500 transition-colors"
+                          >
+                            <Trash2 className="size-4" />
+                          </button>
+                        </div>
+                        <a 
+                          href={lesson.video_url} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="p-2 rounded-xl bg-slate-50 text-slate-600 hover:bg-slate-100 transition-colors"
+                        >
+                          <ExternalLink className="size-4" />
+                        </a>
+                      </div>
+                    </div>
+                  </motion.div>
+                );
+              })
             )}
           </div>
         </div>

@@ -84,7 +84,7 @@ export default function AdminDashboard() {
   const statCards = [
     { label: 'Usuários Totais', value: stats.users, icon: Users, color: 'text-blue-600', bg: 'bg-blue-50' },
     { label: 'Aulas Publicadas', value: stats.lessons, icon: Video, color: 'text-purple-600', bg: 'bg-purple-50' },
-    { label: 'Jornadas Ativas', value: stats.journeys, icon: Map, color: 'text-emerald-600', bg: 'bg-emerald-50' },
+    { label: 'Cursos Ativos', value: stats.journeys, icon: Map, color: 'text-emerald-600', bg: 'bg-emerald-50' },
     { label: 'Posts na Comunidade', value: stats.posts, icon: MessageSquare, color: 'text-orange-600', bg: 'bg-orange-50' },
   ];
 
@@ -188,32 +188,47 @@ export default function AdminDashboard() {
           </div>
 
           {/* Quick Actions */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <Link href="/admin/videos">
-              <motion.div 
-                whileHover={{ scale: 1.02 }}
-                className="bg-slate-900 rounded-3xl p-8 text-white flex items-center justify-between group cursor-pointer"
-              >
-                <div>
-                  <h3 className="text-xl font-bold mb-2">Gerenciar Vídeos</h3>
-                  <p className="text-slate-400 text-sm">Adicione, edite ou remova aulas e materiais</p>
-                </div>
-                <div className="size-12 rounded-2xl bg-white/10 flex items-center justify-center group-hover:bg-primary transition-colors">
-                  <ArrowRight className="size-6" />
-                </div>
-              </motion.div>
-            </Link>
+               <motion.div 
+                 whileHover={{ scale: 1.02 }}
+                 className="bg-slate-900 rounded-3xl p-8 text-white flex items-center justify-between group cursor-pointer h-full"
+               >
+                 <div>
+                   <h3 className="text-xl font-bold mb-2">Gerenciar Aulas</h3>
+                   <p className="text-slate-400 text-sm">Adicione, edite ou remova aulas e materiais</p>
+                 </div>
+                 <div className="size-12 rounded-2xl bg-white/10 flex items-center justify-center group-hover:bg-primary transition-colors shrink-0 ml-4">
+                   <ArrowRight className="size-6" />
+                 </div>
+               </motion.div>
+             </Link>
+ 
+             <Link href="/admin/journeys">
+               <motion.div 
+                 whileHover={{ scale: 1.02 }}
+                 className="bg-primary rounded-3xl p-8 text-white flex items-center justify-between group cursor-pointer h-full"
+               >
+                 <div>
+                   <h3 className="text-xl font-bold mb-2">Gerenciar Cursos</h3>
+                   <p className="text-white/70 text-sm">Controle os cursos, jornadas, durações e capas</p>
+                 </div>
+                 <div className="size-12 rounded-2xl bg-white/10 flex items-center justify-center group-hover:bg-white group-hover:text-primary transition-colors shrink-0 ml-4">
+                   <ArrowRight className="size-6" />
+                 </div>
+               </motion.div>
+             </Link>
 
-            <Link href="/admin/journeys">
+            <Link href="/admin/cadastros">
               <motion.div 
                 whileHover={{ scale: 1.02 }}
-                className="bg-primary rounded-3xl p-8 text-white flex items-center justify-between group cursor-pointer"
+                className="bg-indigo-600 rounded-3xl p-8 text-white flex items-center justify-between group cursor-pointer h-full"
               >
                 <div>
-                  <h3 className="text-xl font-bold mb-2">Gerenciar Jornadas</h3>
-                  <p className="text-white/70 text-sm">Controle as trilhas de aprendizado e arquétipos</p>
+                  <h3 className="text-xl font-bold mb-2">Gerenciar Cadastros</h3>
+                  <p className="text-indigo-200 text-sm">Crie, edite e gerencie cadastros e perfis de alunos</p>
                 </div>
-                <div className="size-12 rounded-2xl bg-white/10 flex items-center justify-center group-hover:bg-white group-hover:text-primary transition-colors">
+                <div className="size-12 rounded-2xl bg-white/10 flex items-center justify-center group-hover:bg-white group-hover:text-indigo-600 transition-colors shrink-0 ml-4">
                   <ArrowRight className="size-6" />
                 </div>
               </motion.div>

@@ -6,7 +6,7 @@ import AdminGuard from '@/components/AdminGuard';
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/lib/supabase';
 import { motion, AnimatePresence } from 'motion/react';
-import { Plus, Trash2, Edit2, CheckCircle2, AlertCircle, Map, Users, Clock, Layers, ArrowLeft } from 'lucide-react';
+import { Plus, Trash2, Edit2, CheckCircle2, AlertCircle, Map, Users, Clock, Layers, ArrowLeft, Video, Search } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { getDirectDriveLink } from '@/lib/utils';
@@ -32,6 +32,7 @@ export default function AdminJourneys() {
   const [uploading, setUploading] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
+  const [searchTerm, setSearchTerm] = useState('');
 
   // Form State
   const [formData, setFormData] = useState({
@@ -91,13 +92,13 @@ export default function AdminJourneys() {
           .update(dataToSave)
           .eq('id', editingJourney.id);
         if (error) throw error;
-        setMessage({ type: 'success', text: 'Jornada atualizada com sucesso!' });
+        setMessage({ type: 'success', text: 'Curso atualizado com sucesso!' });
       } else {
         const { error } = await supabase
           .from('journeys')
           .insert([dataToSave]);
         if (error) throw error;
-        setMessage({ type: 'success', text: 'Jornada adicionada com sucesso!' });
+        setMessage({ type: 'success', text: 'Curso adicionado com sucesso!' });
       }
 
       setShowAddModal(false);
@@ -115,7 +116,7 @@ export default function AdminJourneys() {
       fetchData();
     } catch (err: any) {
       console.error('Error saving journey:', err);
-      setMessage({ type: 'error', text: 'Erro ao salvar jornada: ' + err.message });
+      setMessage({ type: 'error', text: 'Erro ao salvar curso: ' + err.message });
     } finally {
       setLoading(false);
       setUploading(false);
@@ -123,16 +124,16 @@ export default function AdminJourneys() {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Tem certeza que deseja excluir esta jornada? Isso pode afetar usuários vinculados a ela.')) return;
+    if (!confirm('Tem certeza que deseja excluir este curso? Isso pode afetar usuários e aulas vinculadas a ele.')) return;
     
     try {
       const { error } = await supabase.from('journeys').delete().eq('id', id);
       if (error) throw error;
-      setMessage({ type: 'success', text: 'Jornada excluída com sucesso!' });
+      setMessage({ type: 'success', text: 'Curso excluído com sucesso!' });
       fetchData();
     } catch (err: any) {
       console.error('Error deleting journey:', err);
-      setMessage({ type: 'error', text: 'Erro ao excluir jornada.' });
+      setMessage({ type: 'error', text: 'Erro ao excluir curso.' });
     }
   };
 
@@ -150,6 +151,10 @@ export default function AdminJourneys() {
     setShowAddModal(true);
   };
 
+  const filteredJourneys = journeys.filter(journey => 
+    journey.title.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
     <AdminGuard>
       <main className="min-h-screen bg-white relative pb-24">
@@ -163,8 +168,8 @@ export default function AdminJourneys() {
 
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
             <div>
-              <h1 className="text-3xl font-bold text-slate-900 font-display">Gerenciar Jornadas</h1>
-              <p className="text-slate-500 text-sm">Crie e edite as jornadas de aprendizado do curso</p>
+              <h1 className="text-3xl font-bold text-slate-900 font-display">Gerenciar Cursos</h1>
+              <p className="text-slate-500 text-sm">Crie, edite e gerencie os cursos e trilhas de aprendizado do sistema</p>
             </div>
             <button 
               onClick={() => {
@@ -183,8 +188,20 @@ export default function AdminJourneys() {
               className="flex items-center gap-2 bg-primary text-white px-6 py-3 rounded-2xl font-bold text-sm hover:bg-primary/90 transition-all shadow-lg shadow-primary/20"
             >
               <Plus className="size-5" />
-              Nova Jornada
+              Novo Curso
             </button>
+          </div>
+
+          {/* Search bar */}
+          <div className="relative mb-8 max-w-md">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 size-5 text-slate-400" />
+            <input 
+              type="text" 
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              placeholder="Buscar curso por título..."
+              className="w-full bg-white border border-slate-200 rounded-2xl py-3 pl-12 pr-4 text-sm text-slate-800 focus:outline-none focus:border-primary/50 transition-colors shadow-sm"
+            />
           </div>
 
           {message && (
@@ -205,13 +222,13 @@ export default function AdminJourneys() {
               Array.from({ length: 3 }).map((_, i) => (
                 <div key={i} className="h-64 bg-slate-100 rounded-3xl animate-pulse" />
               ))
-            ) : journeys.length === 0 ? (
+            ) : filteredJourneys.length === 0 ? (
               <div className="col-span-full py-20 text-center">
                 <Map className="size-16 text-slate-200 mx-auto mb-4" />
-                <p className="text-slate-500">Nenhuma jornada cadastrada.</p>
+                <p className="text-slate-500">Nenhum curso cadastrado ou encontrado.</p>
               </div>
             ) : (
-              journeys.map((journey) => (
+              filteredJourneys.map((journey) => (
                 <motion.div 
                   key={journey.id}
                   layout
@@ -258,19 +275,30 @@ export default function AdminJourneys() {
                       </div>
                     </div>
                     
-                    <div className="flex items-center justify-end gap-2 pt-4 border-t border-slate-100">
-                      <button 
-                        onClick={() => openEditModal(journey)}
-                        className="p-2 rounded-xl bg-slate-50 text-slate-600 hover:bg-primary/10 hover:text-primary transition-colors"
+                    <div className="flex items-center justify-between pt-4 border-t border-slate-100 gap-2">
+                      <Link 
+                        href={`/admin/videos?journey_id=${journey.id}`}
+                        className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-primary/5 text-primary text-xs font-bold hover:bg-primary/15 transition-all shrink-0"
                       >
-                        <Edit2 className="size-4" />
-                      </button>
-                      <button 
-                        onClick={() => handleDelete(journey.id)}
-                        className="p-2 rounded-xl bg-slate-50 text-slate-600 hover:bg-red-50 hover:text-red-500 transition-colors"
-                      >
-                        <Trash2 className="size-4" />
-                      </button>
+                        <Video className="size-3.5" />
+                        Gerenciar Aulas
+                      </Link>
+                      <div className="flex items-center gap-1">
+                        <button 
+                          onClick={() => openEditModal(journey)}
+                          title="Editar Curso"
+                          className="p-2 rounded-xl bg-slate-50 text-slate-600 hover:bg-primary/10 hover:text-primary transition-colors"
+                        >
+                          <Edit2 className="size-4" />
+                        </button>
+                        <button 
+                          onClick={() => handleDelete(journey.id)}
+                          title="Excluir Curso"
+                          className="p-2 rounded-xl bg-slate-50 text-slate-600 hover:bg-red-50 hover:text-red-500 transition-colors"
+                        >
+                          <Trash2 className="size-4" />
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </motion.div>
@@ -291,7 +319,7 @@ export default function AdminJourneys() {
               >
                 <div className="p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50">
                   <h3 className="text-xl font-bold text-slate-900 font-display">
-                    {editingJourney ? 'Editar Jornada' : 'Nova Jornada'}
+                    {editingJourney ? 'Editar Curso' : 'Novo Curso'}
                   </h3>
                   <button 
                     onClick={() => setShowAddModal(false)}
@@ -304,14 +332,14 @@ export default function AdminJourneys() {
                 <form onSubmit={handleSubmit} className="p-6 max-h-[70vh] overflow-y-auto space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2 md:col-span-2">
-                      <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">Título da Jornada</label>
+                      <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">Título do Curso</label>
                       <input 
                         required
                         type="text"
                         value={formData.title}
                         onChange={(e) => setFormData({...formData, title: e.target.value})}
                         className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-slate-800 focus:outline-none focus:border-primary/50"
-                        placeholder="Ex: Jornada da Prosperidade"
+                        placeholder="Ex: Curso de Inteligência Financeira"
                       />
                     </div>
                     <div className="space-y-2">
@@ -435,7 +463,7 @@ export default function AdminJourneys() {
                       disabled={loading || uploading}
                       className="flex-1 py-4 rounded-2xl bg-primary text-white font-bold text-sm hover:bg-primary/90 transition-colors disabled:opacity-50 shadow-lg shadow-primary/20"
                     >
-                      {uploading ? 'Enviando Imagem...' : loading ? 'Salvando...' : editingJourney ? 'Atualizar Jornada' : 'Criar Jornada'}
+                      {uploading ? 'Enviando Imagem...' : loading ? 'Salvando...' : editingJourney ? 'Atualizar Curso' : 'Criar Curso'}
                     </button>
                   </div>
                 </form>
